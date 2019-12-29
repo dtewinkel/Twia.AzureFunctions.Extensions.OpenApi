@@ -1,0 +1,33 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29613.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Twia.AzureFunctions.Extensions.OpenApi", "Twia.AzureFunctions.Extensions.OpenApi\Twia.AzureFunctions.Extensions.OpenApi.csproj", "{07C4428B-6397-49F9-A311-7D196B7B4C5E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C717AC16-1AD2-4202-89D8-CA189B04139D}"
+	ProjectSection(SolutionItems) = preProject
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
+		GitVersion.yml = GitVersion.yml
+		ReadMe.md = ReadMe.md
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{07C4428B-6397-49F9-A311-7D196B7B4C5E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{07C4428B-6397-49F9-A311-7D196B7B4C5E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{07C4428B-6397-49F9-A311-7D196B7B4C5E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{07C4428B-6397-49F9-A311-7D196B7B4C5E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {89F66000-6F55-460C-B177-1809ECA04288}
+	EndGlobalSection
+EndGlobal
