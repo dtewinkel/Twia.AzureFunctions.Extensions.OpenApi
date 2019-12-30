@@ -15,7 +15,6 @@ variables:
   SonarProjectKey: TwiaFnOpenApi
   ScriptsArtifactName: Scripts
   PackagesArtifactName: Packages
-  GitVersionJsonFile: GitVersionVariables.json
 
 trigger:
   batch: true
@@ -25,3 +24,9 @@ trigger:
 
 stages:
 - template: ReleaseScripts/build-stage.yml
+
+- template: ReleaseScripts/prerelease-stage.yml
+
+#- template: ReleaseScripts/release-stage.yml
+
+#- template: ReleaseScripts/tag-stage.yml

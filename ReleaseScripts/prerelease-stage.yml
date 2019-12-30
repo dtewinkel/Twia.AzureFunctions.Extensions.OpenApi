@@ -1,0 +1,23 @@
+﻿stages:
+
+- stage: prerelease
+  displayName: publish to pre-release feed
+  dependsOn: build
+  condition: and(succeeded(), ne(variables['Build.SourceBranch'], 'refs/heads/master'))
+  jobs:
+
+  - job: publish_prerelease
+    displayName: publish to pre-release feed
+    pool:
+      vmImage: windows-latest
+    steps:
+
+    - download: current
+
+    - task: NuGetCommand@2
+      displayName: Push to MyGet feed
+      inputs:
+        command: push
+        packagesToPush: $(Pipeline.Workspace)/$(PackagesArtifactName)/*.nupkg
+        nuGetFeedType: external
+        publishFeedCredentials: MyGet twia_dev

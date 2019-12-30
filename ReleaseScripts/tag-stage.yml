@@ -1,0 +1,16 @@
+﻿stages:
+
+- stage: tag
+  displayName: Tag Sources after Release
+  dependsOn: release
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  jobs:
+
+  - job: tag_build
+    displayName: Tag Sources
+    pool:
+      vmImage: ubuntu-latest
+    steps:
+
+    - task: git-tag-on-release-task@8
+      displayName: Tag Sources
