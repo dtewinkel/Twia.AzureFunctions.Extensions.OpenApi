@@ -3,9 +3,9 @@ using System.Linq;
 using System.Reflection;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Azure.WebJobs;
-using Twia.Extensions.Swagger.Documentation;
+using Twia.AzureFunctions.Extensions.OpenApi.Documentation;
 
-namespace Twia.Extensions.Swagger
+namespace Twia.AzureFunctions.Extensions.OpenApi
 {
     public class FunctionApiDescriptionGroupCollectionProvider : IApiDescriptionGroupCollectionProvider
     {

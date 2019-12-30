@@ -6,9 +6,9 @@ using Microsoft.Extensions.Options;
 using Microsoft.OpenApi;
 using Microsoft.OpenApi.Extensions;
 using Swashbuckle.AspNetCore.Swagger;
-using Twia.Extensions.Swagger.Config;
+using Twia.AzureFunctions.Extensions.OpenApi.Config;
 
-namespace Twia.Extensions.Swagger
+namespace Twia.AzureFunctions.Extensions.OpenApi
 {
     public class SwaggerService : ISwaggerService
     {

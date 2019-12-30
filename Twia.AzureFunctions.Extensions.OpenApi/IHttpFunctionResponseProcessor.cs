@@ -2,7 +2,7 @@
 using System.Reflection;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 
-namespace Twia.Extensions.Swagger
+namespace Twia.AzureFunctions.Extensions.OpenApi
 {
     public interface IHttpFunctionResponseProcessor
     {

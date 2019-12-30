@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace Twia.Extensions.Swagger
+namespace Twia.AzureFunctions.Extensions.OpenApi
 {
     public interface ISwaggerServiceConfigurationStorage
     {

@@ -1,4 +1,4 @@
-﻿namespace Twia.Extensions.Swagger.Config
+﻿namespace Twia.AzureFunctions.Extensions.OpenApi.Config
 {
     public class OpenAPiDocumentationDocument
     {

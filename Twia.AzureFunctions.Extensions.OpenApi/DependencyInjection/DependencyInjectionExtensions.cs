@@ -1,20 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
 using System.Reflection;
-using System.Xml.XPath;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using Twia.Extensions.Swagger.Config;
+using Twia.AzureFunctions.Extensions.OpenApi.Config;
 
-namespace Twia.Extensions.Swagger.DependencyInjection
+namespace Twia.AzureFunctions.Extensions.OpenApi.DependencyInjection
 {
     public static class DependencyInjectionExtensions
     {
@@ -81,7 +78,6 @@ namespace Twia.Extensions.Swagger.DependencyInjection
             var xmlFiles = new List<string>();
             foreach (var dllFile in dllFiles)
             {
-                var fileInfo = new FileInfo(dllFile);
                 var baseName = Path.GetFileNameWithoutExtension(dllFile);
                 var path = Path.GetDirectoryName(dllFile);
                 var basePath = Path.Combine(path, baseName);
