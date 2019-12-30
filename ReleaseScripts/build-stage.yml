@@ -40,7 +40,7 @@
     - task: SonarCloudPrepare@1
       inputs:
         SonarCloud: SonarCloud TWIA
-        organization: stages
+        organization: twia
         scannerMode: MSBuild
         projectKey: $(SonarProjectKey)
         projectName: $(ProjectName)
