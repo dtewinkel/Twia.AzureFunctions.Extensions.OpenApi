@@ -28,6 +28,7 @@
         Company: $(CompanyName)
         Product: $(ProjectName)
         Copyright: Copyright © $(GitVersion.CommitYear) $(CompanyName)
+        PackageVersion: $(Gitversion.NuGetSemVer)
         VersionNumber: $(Gitversion.AssemblySemVer)
         FileVersionNumber: $(Gitversion.AssemblySemFileVer)
         InformationalVersion: $(Gitversion.InformationalVersion)
