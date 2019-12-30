@@ -76,6 +76,17 @@
       displayName: Publish Sonar Cloud Results
 
     - task: CopyFiles@2
+      displayName: Copy Package files
+      inputs:
+        SourceFolder: Twia.AzureFunctions.Extensions.OpenApi/bin/$(BuildConfiguration)
+        Contents: '*.nupkg'
+        TargetFolder: $(PackagesPath)
+
+    - publish: $(PackagesPath)
+      artifact: $(PackagesArtifactName)
+      displayName: Publish [$(PackagesArtifactName)] Artifact
+
+    - task: CopyFiles@2
       displayName: Copy Release Scripts
       inputs:
         SourceFolder: ReleaseScripts

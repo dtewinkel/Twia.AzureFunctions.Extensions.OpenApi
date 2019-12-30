@@ -10,7 +10,7 @@ variables:
   Solution: $(ProjectName).sln
   BuildPlatform: Any CPU
   BuildConfiguration: Release
-  SonarConnection: Sonar
+  SonarConnection: SonarCloud TWIA
   SonarOrganization: twia
   SonarProjectKey: TwiaFnOpenApi
   ScriptsArtifactName: Scripts
