@@ -17,8 +17,11 @@
       displayName: Set Assembly Info
       inputs:
         Path: $(Build.SourcesDirectory)
-        FileNames: '**/*.csproj'
+        FileNames: |
+          **/*.csproj
+          !ReleaseScripts/*.csproj
         InsertAttributes: false
+        GeneratePackageOnBuild: true
         FileEncoding: utf-8
         WriteBOM: true
         Authors: $(CompanyName)
