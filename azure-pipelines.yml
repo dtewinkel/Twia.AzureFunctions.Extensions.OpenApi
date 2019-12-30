@@ -2,7 +2,7 @@ resources:
   repositories:
   - repository: templates
     type: git
-    name: stages-templates/stages-templates
+    name: Twia.Templates/Twia.Templates
 
 variables:
   ProjectName: Twia.AzureFunctions.Extensions.OpenApi
