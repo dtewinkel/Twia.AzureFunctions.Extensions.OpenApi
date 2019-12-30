@@ -23,4 +23,4 @@ trigger:
     - '*'
 
 stages:
-  template: ReleaseScripts/build-stage.yml
+- template: ReleaseScripts/build-stage.yml
