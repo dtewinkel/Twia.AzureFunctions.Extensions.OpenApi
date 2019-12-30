@@ -1,8 +1,8 @@
 resources:
   repositories:
-    - repository: templates
-      type: git
-      name: stages-templates/stages-templates
+  - repository: templates
+    type: git
+    name: stages-templates/stages-templates
 
 variables:
   ProjectName: Twia.AzureFunctions.Extensions.OpenApi
@@ -17,10 +17,10 @@ variables:
   GitVersionJsonFile: GitVersionVariables.json
 
 trigger:
-   batch: true
-   branches:
+  batch: true
+  branches:
     include:
-      - '*'
+    - '*'
 
 stages:
-template: ReleaseScripts/build-stage.yml
+  template: ReleaseScripts/build-stage.yml
