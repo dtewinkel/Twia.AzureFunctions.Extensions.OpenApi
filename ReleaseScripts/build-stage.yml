@@ -8,14 +8,13 @@
       vmImage: windows-latest
     variables:
       ScriptsPath: $(build.artifactStagingDirectory)/$(ScriptsArtifactName)
-      FunctionPath: $(build.artifactStagingDirectory)/$(FunctionArtifactName)
-      IntegrationTestsPath: $(build.artifactStagingDirectory)/$(IntegrationTestsArtifactName)
+      PackagesPath: $(build.artifactStagingDirectory)/$(PackagesArtifactName)
     steps:
 
     - template: GitVersion-run-steps-v1.yml@templates
 
     - task: Assembly-Info-NetCore@2
-      displayName: "Set Assembly Info"
+      displayName: Set Assembly Info
       inputs:
         Path: $(Build.SourcesDirectory)
         FileNames: '**/*.csproj'
@@ -30,6 +29,13 @@
         FileVersionNumber: $(Gitversion.AssemblySemFileVer)
         InformationalVersion: $(Gitversion.InformationalVersion)
 
+    - pwsh: |
+        $licenesFile = "LICENSE.txt"
+        cat $licenesFile |
+            % { $_ -replace '^Copyright \d4 .*$', 'Copyright $(GitVersion.CommitYear) $(CompanyName)'  } |
+            Out-File $licenesFile -Encoding utf8BOM
+      displayName: Set Copyright in License file
+
     - task: DotNetCoreCLI@2
       displayName: Resore NuGet packages
       inputs:
@@ -39,8 +45,8 @@
 
     - task: SonarCloudPrepare@1
       inputs:
-        SonarCloud: SonarCloud TWIA
-        organization: twia
+        SonarCloud: $(SonarConnection)
+        organization: $(SonarOrganization)
         scannerMode: MSBuild
         projectKey: $(SonarProjectKey)
         projectName: $(ProjectName)

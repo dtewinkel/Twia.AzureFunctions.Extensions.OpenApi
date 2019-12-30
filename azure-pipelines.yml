@@ -10,10 +10,11 @@ variables:
   Solution: $(ProjectName).sln
   BuildPlatform: Any CPU
   BuildConfiguration: Release
+  SonarConnection: Sonar
+  SonarOrganization: twia
   SonarProjectKey: TwiaFnOpenApi
   ScriptsArtifactName: Scripts
-  FunctionArtifactName: Function
-  IntegrationTestsArtifactName: Tests
+  PackagesArtifactName: Packages
   GitVersionJsonFile: GitVersionVariables.json
 
 trigger:
