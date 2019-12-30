@@ -18,7 +18,7 @@
       inputs:
         Path: $(Build.SourcesDirectory)
         FileNames: '**/*.csproj'
-        InsertAttributes: true
+        InsertAttributes: false
         FileEncoding: utf-8
         WriteBOM: true
         Authors: $(CompanyName)

@@ -6,6 +6,9 @@
     <Version>0.0.1-local</Version>
     <InformationalVersion>0.0.1 local build</InformationalVersion>
     <FileVersion>0.0.1.0</FileVersion>
+    <Authors>TWIA</Authors>
+    <Company>TWIA</Company>
+    <Copyright>Copyright © 2019 Twia</Copyright>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Support to generate Open API or Swagger documentation for Azure Function Apps.</Description>
     <RepositoryType>Git</RepositoryType>
@@ -14,12 +17,11 @@
     <PackageProjectUrl>https://dev.azure.com/twia/Twia.AzureFunctions.Extensions.OpenApi</PackageProjectUrl>
     <PackageIcon>logo.png</PackageIcon>
     <PackageIconUrl />
+    <PackageTags>open api swagger twia json documentation azure function</PackageTags>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <WarningsAsErrors />
-    <Copyright>Copyright © 2019 Twia</Copyright>
 
     <CodeAnalysisRuleSet>Twia.AzureFunctions.Extensions.OpenApi.ruleset</CodeAnalysisRuleSet>
-
   </PropertyGroup>
 
   <ItemGroup>
