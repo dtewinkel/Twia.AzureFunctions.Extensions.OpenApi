@@ -1,9 +1,26 @@
+resources:
+  repositories:
+    - repository: templates
+      type: git
+      name: stages-templates/stages-templates
+
+variables:
+  ProjectName: Twia.AzureFunctions.Extensions.OpenApi
+  CompanyName: TWIA
+  Solution: $(ProjectName).sln
+  BuildPlatform: Any CPU
+  BuildConfiguration: Release
+  SonarProjectKey: TwiaFnOpenApi
+  ScriptsArtifactName: Scripts
+  FunctionArtifactName: Function
+  IntegrationTestsArtifactName: Tests
+  GitVersionJsonFile: GitVersionVariables.json
+
 trigger:
-- master
+   batch: true
+   branches:
+    include:
+      - '*'
 
-pool:
-  vmImage: 'ubuntu-latest'
-
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+stages:
+template: ReleaseScripts/build-stage.yml

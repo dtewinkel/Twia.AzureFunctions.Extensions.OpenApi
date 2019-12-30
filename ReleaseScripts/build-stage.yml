@@ -1,0 +1,85 @@
+﻿stages:
+- stage: build
+  displayName: Build artifacts
+  jobs:
+  - job: run_build
+    displayName: Build, test and publish
+    pool:
+      vmImage: windows-latest
+    variables:
+      ScriptsPath: $(build.artifactStagingDirectory)/$(ScriptsArtifactName)
+      FunctionPath: $(build.artifactStagingDirectory)/$(FunctionArtifactName)
+      IntegrationTestsPath: $(build.artifactStagingDirectory)/$(IntegrationTestsArtifactName)
+    steps:
+
+    - template: GitVersion-run-steps-v1.yml@templates
+
+    - task: Assembly-Info-NetCore@2
+      displayName: "Set Assembly Info"
+      inputs:
+        Path: $(Build.SourcesDirectory)
+        FileNames: '**/*.csproj'
+        InsertAttributes: true
+        FileEncoding: utf-8
+        WriteBOM: true
+        Authors: $(CompanyName)
+        Company: $(CompanyName)
+        Product: $(ProjectName)
+        Copyright: Copyright © $(GitVersion.CommitYear) $(CompanyName)
+        VersionNumber: $(Gitversion.AssemblySemVer)
+        FileVersionNumber: $(Gitversion.AssemblySemFileVer)
+        InformationalVersion: $(Gitversion.InformationalVersion)
+
+    - task: DotNetCoreCLI@2
+      displayName: Resore NuGet packages
+      inputs:
+        command: restore
+        projects: $(Solution)
+        feedsToUse: select
+
+    - task: SonarCloudPrepare@1
+      inputs:
+        SonarCloud: SonarCloud TWIA
+        organization: stages
+        scannerMode: MSBuild
+        projectKey: $(SonarProjectKey)
+        projectName: $(ProjectName)
+      displayName: Prepare Sonar Cloud Scanner
+
+    - task: DotNetCoreCLI@2
+      displayName: Build solution
+      inputs:
+        command: build
+        projects: $(Solution)
+        arguments: --no-restore --configuration $(BuildConfiguration)
+
+    - task: DotNetCoreCLI@2
+      displayName: Run Unit test
+      inputs:
+        command: test
+        projects: '**/*.UnitTests.csproj'
+        arguments: --no-build --configuration $(BuildConfiguration) --collect:"Code Coverage"
+        testRunTitle: Unit Tests
+
+    - task: SonarCloudAnalyze@1
+      displayName: Sonar Cloud Analyze
+
+    - task: SonarCloudPublish@1
+      inputs:
+        pollingTimeoutSec: 300
+      displayName: Publish Sonar Cloud Results
+
+    - task: CopyFiles@2
+      displayName: Copy Release Scripts
+      inputs:
+        SourceFolder: ReleaseScripts
+        Contents: |
+            *.ps1
+            *.yml
+        TargetFolder: $(ScriptsPath)
+
+    - publish: $(ScriptsPath)
+      artifact: $(ScriptsArtifactName)
+      displayName: Publish [$(ScriptsArtifactName)] Artifact
+
+    - template: GitVersion-export-steps-v1.yml@templates
