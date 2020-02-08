@@ -23,6 +23,16 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".sonarlint", ".sonarlint", 
 		.sonarlint\twiafnopenapicsharp.ruleset = .sonarlint\twiafnopenapicsharp.ruleset
 	EndProjectSection
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Twia.AzureFunctions.Extensions.OpenApi.UnitTests", "Twia.AzureFunctions.Extensions.OpenApi.UnitTests\Twia.AzureFunctions.Extensions.OpenApi.UnitTests.csproj", "{5C5152C1-026C-4F38-9940-F8B0B8FBEBE4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Twia.AzureFunctions.Extensions.OpenApi.ExampleFunction", "Twia.AzureFunctions.Extensions.OpenApi.ExampleFunction\Twia.AzureFunctions.Extensions.OpenApi.ExampleFunction.csproj", "{22582407-623B-45B3-B120-1A8B4C241D06}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestAssemblies", "TestAssemblies", "{35F90940-296B-4B24-8FC2-50DDB0EE50A3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestAssembly.Function", "TestAssembly.Function\TestAssembly.Function.csproj", "{A6055893-7D6D-4D0C-ADF5-9D25CB26164C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestAssembly.Client", "TestAssembly.Client\TestAssembly.Client.csproj", "{6C479799-DF18-4DC9-A7B9-42F3DBBFCA79}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,9 +45,29 @@ Global
 		{07C4428B-6397-49F9-A311-7D196B7B4C5E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{62EE4CE2-CF58-4B26-9B76-56BEFFFD03F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{62EE4CE2-CF58-4B26-9B76-56BEFFFD03F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5C5152C1-026C-4F38-9940-F8B0B8FBEBE4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C5152C1-026C-4F38-9940-F8B0B8FBEBE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5C5152C1-026C-4F38-9940-F8B0B8FBEBE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5C5152C1-026C-4F38-9940-F8B0B8FBEBE4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{22582407-623B-45B3-B120-1A8B4C241D06}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22582407-623B-45B3-B120-1A8B4C241D06}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{22582407-623B-45B3-B120-1A8B4C241D06}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{22582407-623B-45B3-B120-1A8B4C241D06}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A6055893-7D6D-4D0C-ADF5-9D25CB26164C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A6055893-7D6D-4D0C-ADF5-9D25CB26164C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A6055893-7D6D-4D0C-ADF5-9D25CB26164C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A6055893-7D6D-4D0C-ADF5-9D25CB26164C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C479799-DF18-4DC9-A7B9-42F3DBBFCA79}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C479799-DF18-4DC9-A7B9-42F3DBBFCA79}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C479799-DF18-4DC9-A7B9-42F3DBBFCA79}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C479799-DF18-4DC9-A7B9-42F3DBBFCA79}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{A6055893-7D6D-4D0C-ADF5-9D25CB26164C} = {35F90940-296B-4B24-8FC2-50DDB0EE50A3}
+		{6C479799-DF18-4DC9-A7B9-42F3DBBFCA79} = {35F90940-296B-4B24-8FC2-50DDB0EE50A3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {89F66000-6F55-460C-B177-1809ECA04288}

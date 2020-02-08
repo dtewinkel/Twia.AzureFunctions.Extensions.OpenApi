@@ -1,34 +1,50 @@
-using System.Net;
-using System.Net.Http;
-using System.Reflection;
-using System.Text;
-using Microsoft.Extensions.Options;
+using System.Text.RegularExpressions;
+using EnsureThat;
 using Microsoft.OpenApi;
 using Microsoft.OpenApi.Extensions;
 using Swashbuckle.AspNetCore.Swagger;
-using Twia.AzureFunctions.Extensions.OpenApi.Config;
 
 namespace Twia.AzureFunctions.Extensions.OpenApi
 {
     public class SwaggerService : ISwaggerService
     {
         private readonly ISwaggerProvider _swaggerProvider;
-        private readonly OpenApiSpecVersion _openApiSpecVersion;
 
-        public SwaggerService(ISwaggerProvider swaggerProvider, IOptions<OpenAPiDocumentation> options)
+        public SwaggerService(ISwaggerProvider swaggerProvider)
         {
+            EnsureArg.IsNotNull(swaggerProvider, nameof(swaggerProvider));
+
             _swaggerProvider = swaggerProvider;
-            _openApiSpecVersion = options.Value.OpenApiSpecVersion;
         }
 
-        public HttpResponseMessage GetSwaggerJson(Assembly fromAssembly, string documentName)
+        public string GetSwaggerJson(string documentName, string host = null, string basePath = null, OpenApiSpecVersion openApiSpecVersion = OpenApiSpecVersion.OpenApi3_0)
         {
-            var document = _swaggerProvider.GetSwagger(documentName ?? "v1");
-            var documentJson = document.SerializeAsJson(_openApiSpecVersion);
-            return new HttpResponseMessage(HttpStatusCode.OK)
+            EnsureArg.IsNotNullOrWhiteSpace(documentName, nameof(documentName));
+
+            var (cleanHost, cleanBasePath) = CleanHostAndBasePath(host, basePath);
+
+            var document = _swaggerProvider.GetSwagger(documentName, cleanHost, cleanBasePath);
+            return document.SerializeAsJson(openApiSpecVersion);
+        }
+
+        private static (string cleanHost, string cleanBasePath) CleanHostAndBasePath(string host, string basePath)
+        {
+            if (string.IsNullOrWhiteSpace(host))
             {
-                Content = new StringContent(documentJson, Encoding.UTF8, "application/json")
-            };
+                host = null;
+            }
+            else
+            {
+                host = host.Trim(' ').TrimEnd('/');
+                if (!Regex.IsMatch(host, "^https?://"))
+                {
+                    host = $"https://{host}";
+                }
+            }
+
+            basePath = string.IsNullOrWhiteSpace(basePath) ? null : $"/{basePath.Trim('/', ' ')}";
+
+            return (host, basePath);
         }
     }
 }

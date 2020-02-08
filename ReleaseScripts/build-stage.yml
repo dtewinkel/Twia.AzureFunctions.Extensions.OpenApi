@@ -54,6 +54,8 @@
         scannerMode: MSBuild
         projectKey: $(SonarProjectKey)
         projectName: $(ProjectName)
+        extraProperties: |
+          sonar.coverage.exclusions=TestAssembly.*/**,Twia.AzureFunctions.Extensions.OpenApi.ExampleFunction/**
       displayName: Prepare Sonar Cloud Scanner
 
     - task: DotNetCoreCLI@2

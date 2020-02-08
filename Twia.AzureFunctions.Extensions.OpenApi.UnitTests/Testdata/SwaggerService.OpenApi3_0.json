@@ -1,0 +1,9 @@
+﻿{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Test 2",
+    "description": "Test document 2",
+    "version": "v2"
+  },
+  "paths": {}
+}

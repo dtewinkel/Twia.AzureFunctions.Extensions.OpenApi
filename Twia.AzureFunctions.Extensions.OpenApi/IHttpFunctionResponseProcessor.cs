@@ -6,6 +6,6 @@ namespace Twia.AzureFunctions.Extensions.OpenApi
 {
     public interface IHttpFunctionResponseProcessor
     {
-        void AddResponseTypes(IList<ApiResponseType> supportedResponseTypes, MethodInfo httpFunctionMethod);
+        IReadOnlyList<ApiResponseType> GetResponseTypes(MethodInfo httpFunctionMethod);
     }
 }
