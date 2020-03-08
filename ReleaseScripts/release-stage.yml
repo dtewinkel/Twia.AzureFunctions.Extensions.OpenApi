@@ -12,6 +12,10 @@
       vmImage: windows-latest
     steps:
 
+    - checkout: none
+
+    - download: current
+
     - task: NuGetCommand@2
       displayName: Push to NuGet
       inputs:

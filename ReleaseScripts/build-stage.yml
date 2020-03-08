@@ -91,18 +91,3 @@
     - publish: $(PackagesPath)
       artifact: $(PackagesArtifactName)
       displayName: Publish [$(PackagesArtifactName)] Artifact
-
-    - task: CopyFiles@2
-      displayName: Copy Release Scripts
-      inputs:
-        SourceFolder: ReleaseScripts
-        Contents: |
-            *.ps1
-            *.yml
-        TargetFolder: $(ScriptsPath)
-
-    - publish: $(ScriptsPath)
-      artifact: $(ScriptsArtifactName)
-      displayName: Publish [$(ScriptsArtifactName)] Artifact
-
-    - template: GitVersion-export-steps-v1.yml@templates

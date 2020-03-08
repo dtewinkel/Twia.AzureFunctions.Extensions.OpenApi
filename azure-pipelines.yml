@@ -27,6 +27,6 @@ stages:
 
 - template: ReleaseScripts/prerelease-stage.yml
 
-#- template: ReleaseScripts/release-stage.yml
+- template: ReleaseScripts/release-stage.yml
 
-#- template: ReleaseScripts/tag-stage.yml
+- template: ReleaseScripts/tag-stage.yml

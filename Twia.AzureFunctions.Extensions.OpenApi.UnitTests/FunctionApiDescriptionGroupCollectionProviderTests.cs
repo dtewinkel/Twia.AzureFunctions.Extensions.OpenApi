@@ -4,8 +4,11 @@ using System.Linq;
 using System.Reflection;
 using FakeItEasy;
 using FluentAssertions;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.Azure.WebJobs;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Twia.AzureFunctions.Extensions.OpenApi.Documentation;
 
 namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests
 {
@@ -16,32 +19,20 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests
         private IHttpFunctionProcessor _functionProcessor;
         private FunctionApiDescriptionGroupCollectionProvider _sut;
         private readonly Assembly _exampleAssembly = AssemblyHelper.GetFunctionAssembly("../../../../Twia.AzureFunctions.Extensions.OpenApi.ExampleFunction", "*.ExampleFunction.dll");
-
-        private readonly string[] _expectedMethodNames =
-        {
-            "Twia.AzureFunctions.Extensions.OpenApi.ExampleFunction.SwaggerFunction.GetSwagger",
-            "Twia.AzureFunctions.Extensions.OpenApi.ExampleFunction.SwaggerFunction.GetOpenApiV3",
-            "Twia.AzureFunctions.Extensions.OpenApi.ExampleFunction.ExampleHttpFunctions.ExampleReturnTypes.GetVoidReturnValue",
-            "Twia.AzureFunctions.Extensions.OpenApi.ExampleFunction.ExampleHttpFunctions.ExampleReturnTypes.GetIActionResultReturnValue",
-            "Twia.AzureFunctions.Extensions.OpenApi.ExampleFunction.ExampleHttpFunctions.ExampleReturnTypes.GetHttpResponseMessageReturnValue",
-            "Twia.AzureFunctions.Extensions.OpenApi.ExampleFunction.ExampleHttpFunctions.ExampleReturnTypes.GetExampleResponseReturnValue",
-            "Twia.AzureFunctions.Extensions.OpenApi.ExampleFunction.ExampleHttpFunctions.ExampleReturnTypes.GetExampleResponseArrayReturnValue",
-            "Twia.AzureFunctions.Extensions.OpenApi.ExampleFunction.ExampleHttpFunctions.ExampleAsyncReturnTypes.GetTaskReturnValue",
-            "Twia.AzureFunctions.Extensions.OpenApi.ExampleFunction.ExampleHttpFunctions.ExampleAsyncReturnTypes.GetTaskOfIActionResultReturnValue",
-            "Twia.AzureFunctions.Extensions.OpenApi.ExampleFunction.ExampleHttpFunctions.ExampleAsyncReturnTypes.GetTaskOfHttpResponseMessageReturnValue",
-            "Twia.AzureFunctions.Extensions.OpenApi.ExampleFunction.ExampleHttpFunctions.ExampleAsyncReturnTypes.GetTaskOfExampleResponseReturnValue",
-            "Twia.AzureFunctions.Extensions.OpenApi.ExampleFunction.ExampleHttpFunctions.ExampleResponseAttributes.GetVoidProducesResponseType",
-            "Twia.AzureFunctions.Extensions.OpenApi.ExampleFunction.ExampleHttpFunctions.ExampleResponseAttributes.GetExampleResponseProducesResponseType",
-            "Twia.AzureFunctions.Extensions.OpenApi.ExampleFunction.ExampleHttpFunctions.ExampleResponseAttributes.GetMultipleProducesResponseTypes",
-            "Twia.AzureFunctions.Extensions.OpenApi.ExampleFunction.ExampleHttpFunctions.ExampleGrouping.NoGrouping",
-            "Twia.AzureFunctions.Extensions.OpenApi.ExampleFunction.ExampleHttpFunctions.ExampleGrouping.GroupV1",
-            "Twia.AzureFunctions.Extensions.OpenApi.ExampleFunction.ExampleHttpFunctions.ExampleGrouping.GroupV2"
-        };
-
+        private string[] _expectedMethodNames;
 
         [TestInitialize]
         public void TestInitialize()
         {
+            _expectedMethodNames = _exampleAssembly.GetTypes()
+                .SelectMany(t => t.GetMethods())
+                .Where(m => m.GetCustomAttributes(typeof(FunctionNameAttribute), false).Any())
+                .Where(m => m.GetParameters().Any(p => p.GetCustomAttributes(typeof(HttpTriggerAttribute), false).Any()))
+                .Where(m => !m.GetCustomAttributes(typeof(OpenApiIgnoreAttribute), false).Any())
+                .Where(m => !m.GetCustomAttributes(typeof(ApiExplorerSettingsAttribute), false).Cast<ApiExplorerSettingsAttribute>().Any(a => a.IgnoreApi))
+                .Select(methodInfo => $"{methodInfo.DeclaringType?.FullName ?? ""}.{methodInfo.Name}")
+                .ToArray();
+
             _configuration = A.Fake<ISwaggerServiceConfigurationStorage>();
             _functionProcessor = A.Fake<IHttpFunctionProcessor>();
 

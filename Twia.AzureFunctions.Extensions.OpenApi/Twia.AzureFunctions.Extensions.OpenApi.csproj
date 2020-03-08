@@ -7,33 +7,37 @@
     <Version>0.0.1-local</Version>
     <InformationalVersion>0.0.1 local build</InformationalVersion>
     <FileVersion>0.0.1.0</FileVersion>
-    <Authors>TWIA</Authors>
+    <Authors>TWIA, Daniël te Winkel</Authors>
     <Company>TWIA</Company>
-    <Copyright>Copyright © 2019 Twia</Copyright>
+    <Copyright>Copyright © 2020 TWIA</Copyright>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>Support to generate Open API or Swagger documentation for Azure Function Apps.</Description>
+    <Description>Support to generate OpenAPI or Swagger Json documentation document for Azure Function Apps.</Description>
     <RepositoryType>Git</RepositoryType>
-    <RepositoryUrl>https://dev.azure.com/twia/_git/stages</RepositoryUrl>
+    <RepositoryUrl>https://dev.azure.com/twia/_git/Twia.AzureFunctions.Extensions.OpenApi</RepositoryUrl>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <PackageProjectUrl>https://dev.azure.com/twia/Twia.AzureFunctions.Extensions.OpenApi</PackageProjectUrl>
     <PackageIcon>logo.png</PackageIcon>
     <PackageIconUrl />
-    <PackageTags>open api swagger twia json documentation azure function</PackageTags>
+    <PackageTags>openapi swagger json documentation azure function twia</PackageTags>
 
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <WarningsAsErrors />
 
     <CodeAnalysisRuleSet>Twia.AzureFunctions.Extensions.OpenApi.ruleset</CodeAnalysisRuleSet>
+
+    <PackageReleaseNotes>1.0.0 - Initial Minimal Viable Release. 
+ - Support for Response types.
+ - Support for Body and Path parameter definitions.
+</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Ensure.That" Version="8.1.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.ApiExplorer" Version="2.2.0" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Core" Version="3.0.14" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="3.0.2" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.1.1" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.1.2" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="5.0.0" />
-    <PackageReference Include="System.Text.Json" Version="4.7.0" />
   </ItemGroup>
 
   <ItemGroup>

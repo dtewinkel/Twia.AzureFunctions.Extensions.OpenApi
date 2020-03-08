@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using FakeItEasy;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
@@ -17,25 +19,37 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests
     public class HttpFunctionProcessorTests
     {
         private const string _routePrefix = "aRoute";
-        private HttpFunctionResponseProcessor _httpFunctionResponseProcessor;
+        private IHttpFunctionResponseProcessor _httpFunctionResponseProcessor;
+        private IHttpFunctionParameterProcessor _httpFunctionParameterProcessor;
         private IOptions<HttpOptions> _httpOptions;
         private HttpFunctionProcessor _sut;
 
         [TestInitialize]
         public void TestInitialize()
         {
-            _httpFunctionResponseProcessor = A.Fake<HttpFunctionResponseProcessor>();
+            _httpFunctionParameterProcessor = A.Fake<IHttpFunctionParameterProcessor>();
+            _httpFunctionResponseProcessor = A.Fake<IHttpFunctionResponseProcessor>();
             _httpOptions = A.Fake<IOptions<HttpOptions>>();
-            A.CallTo(() => _httpOptions.Value).Returns(new HttpOptions() { RoutePrefix = _routePrefix } );
+            A.CallTo(() => _httpOptions.Value).Returns(new HttpOptions { RoutePrefix = _routePrefix } );
+            A.CallTo(() => _httpFunctionParameterProcessor.GetApiParameterDescriptions(A<MethodInfo>._, A<string>._)).Returns(new List<ApiParameterDescription>(0));
 
-            _sut = new HttpFunctionProcessor(_httpFunctionResponseProcessor, _httpOptions);
+            _sut = new HttpFunctionProcessor(_httpFunctionParameterProcessor, _httpFunctionResponseProcessor, _httpOptions);
+        }
+
+        [TestMethod]
+        public void Constructor_WithNullForHttpFunctionParameterProcessor_ThrowsException()
+        {
+            // ReSharper disable once ObjectCreationAsStatement
+            Action action = () => new HttpFunctionProcessor(null, _httpFunctionResponseProcessor, _httpOptions);
+
+            action.Should().Throw<ArgumentNullException>().And.ParamName.Should().Be("httpFunctionParameterProcessor");
         }
 
         [TestMethod]
         public void Constructor_WithNullForHttpFunctionResponseProcessor_ThrowsException()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Action action = () => new HttpFunctionProcessor(null, _httpOptions);
+            Action action = () => new HttpFunctionProcessor(_httpFunctionParameterProcessor, null, _httpOptions);
 
             action.Should().Throw<ArgumentNullException>().And.ParamName.Should().Be("httpFunctionResponseProcessor");
         }
@@ -44,7 +58,7 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests
         public void Constructor_WithNullForHttpOptions_ThrowsException()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Action action = () => new HttpFunctionProcessor(_httpFunctionResponseProcessor, null);
+            Action action = () => new HttpFunctionProcessor(_httpFunctionParameterProcessor, _httpFunctionResponseProcessor, null);
 
             action.Should().Throw<ArgumentNullException>().And.ParamName.Should().Be("httpOptions");
         }
@@ -62,7 +76,7 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests
         public void ProcessHttpFunction_ForMetadataTestSingleMethod_GetsGroupName()
         {
             const string methodName = nameof(FunctionMethodTestSource.MetadataTestSingleMethod);
-            var method = typeof(FunctionMethodTestSource).GetMethod(methodName);
+            var method = GetMethodInfo(methodName);
 
             // ReSharper disable once ObjectCreationAsStatement
             var apiDescriptionGroup = _sut.ProcessHttpFunction(method);
@@ -74,8 +88,8 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests
         public void ProcessHttpFunction_ForMetadataTestSingleMethod_GetsSingleGroup()
         {
             var expectedMethods = new[] { "GET" };
-            var methodName = nameof(FunctionMethodTestSource.MetadataTestSingleMethod);
-            var method = typeof(FunctionMethodTestSource).GetMethod(methodName);
+            const string methodName = nameof(FunctionMethodTestSource.MetadataTestSingleMethod);
+            var method = GetMethodInfo(methodName);
 
             // ReSharper disable once ObjectCreationAsStatement
             var apiDescriptionGroup = _sut.ProcessHttpFunction(method);
@@ -89,7 +103,7 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests
         {
             var expectedMethods = new[] { "GET", "PUT", "DELETE" };
             const string methodName = nameof(FunctionMethodTestSource.MetadataTestMultipleMethods);
-            var method = typeof(FunctionMethodTestSource).GetMethod(methodName);
+            var method = GetMethodInfo(methodName);
 
             // ReSharper disable once ObjectCreationAsStatement
             var apiDescriptionGroup = _sut.ProcessHttpFunction(method);
@@ -104,7 +118,7 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests
             var expectedMethods = new [] { "GET", "POST", "PUT", "DELETE", "HEAD", "PATCH", "OPTIONS" };
 
             const string methodName = nameof(FunctionMethodTestSource.MetadataTestNoMethod);
-            var method = typeof(FunctionMethodTestSource).GetMethod(methodName);
+            var method = GetMethodInfo(methodName);
 
             // ReSharper disable once ObjectCreationAsStatement
             var apiDescriptionGroup = _sut.ProcessHttpFunction(method);
@@ -129,7 +143,7 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests
         public void ProcessHttpFunction_ForMetadataTestApiGroup_SetsApiGroup()
         {
             const string methodName = nameof(FunctionMethodTestSource.MetadataTestApiGroup);
-            var method = typeof(FunctionMethodTestSource).GetMethod(methodName);
+            var method = GetMethodInfo(methodName);
 
             // ReSharper disable once ObjectCreationAsStatement
             var apiDescriptionGroup = _sut.ProcessHttpFunction(method);
@@ -143,8 +157,7 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests
         [TestMethod]
         public void ProcessHttpFunction_ForMetadataTestSimpleRoute_GetsCorrectRoute()
         {
-            const string methodName = nameof(FunctionMethodTestSource.MetadataTestSimpleRoute);
-            var method = typeof(FunctionMethodTestSource).GetMethod(methodName);
+            var method = GetMethodInfo(nameof(FunctionMethodTestSource.MetadataTestSimpleRoute));
 
             // ReSharper disable once ObjectCreationAsStatement
             var apiDescriptionGroup = _sut.ProcessHttpFunction(method);
@@ -156,8 +169,7 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests
         [TestMethod]
         public void ProcessHttpFunction_ForMetadataTestMetadataTestRouteWithSegments_GetsCorrectRoute()
         {
-            const string methodName = nameof(FunctionMethodTestSource.MetadataTestRouteWithSegments);
-            var method = typeof(FunctionMethodTestSource).GetMethod(methodName);
+            var method = GetMethodInfo(nameof(FunctionMethodTestSource.MetadataTestRouteWithSegments));
 
             // ReSharper disable once ObjectCreationAsStatement
             var apiDescriptionGroup = _sut.ProcessHttpFunction(method);
@@ -169,14 +181,92 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests
         [TestMethod]
         public void ProcessHttpFunction_ForMetadataTestRouteWithPlaceholders_GetsCorrectRoute()
         {
-            const string methodName = nameof(FunctionMethodTestSource.MetadataTestRouteWithPlaceholders);
-            var method = typeof(FunctionMethodTestSource).GetMethod(methodName);
+            var method = GetMethodInfo(nameof(FunctionMethodTestSource.MetadataTestRouteWithPlaceholders));
 
             // ReSharper disable once ObjectCreationAsStatement
             var apiDescriptionGroup = _sut.ProcessHttpFunction(method);
 
             var apiDescription = apiDescriptionGroup.Items.Single();
-            apiDescription.RelativePath.Should().Be($"{_routePrefix}/Route/{{name}}/{{date}}");
+            apiDescription.RelativePath.Should().Be($"{_routePrefix}/Route/{{name}}/{{date}}/{{id}}/{{anotherId}}");
+        }
+
+        [TestMethod]
+        public void ProcessHttpFunction_WithRouteSet_PassesMethodAndRouteToHttpFunctionParameterProcessor()
+        {
+            var method = GetMethodInfo(nameof(FunctionMethodTestSource.MetadataTestRouteWithPlaceholders));
+            var expectedRoute = "Route/{name}/{date?}/{id:int}/{anotherId:int?}/";
+
+            _sut.ProcessHttpFunction(method);
+
+            A.CallTo(() => _httpFunctionParameterProcessor.GetApiParameterDescriptions(method, expectedRoute))
+                .MustHaveHappenedOnceExactly();
+        }
+
+        [TestMethod]
+        public void ProcessHttpFunction_AddsApiParameterDescriptors()
+        {
+            var method = GetMethodInfo(nameof(FunctionMethodTestSource.MetadataTestRouteWithPlaceholders));
+            var expectedParameterDescriptions = new List<ApiParameterDescription>
+            {
+                new ApiParameterDescription
+                {
+                    Name = "1",
+                    ParameterDescriptor = new ParameterDescriptor { Name = "1" }
+                },
+                new ApiParameterDescription
+                {
+                    Name = "2",
+                    ParameterDescriptor = new ParameterDescriptor { Name = "2" }
+                },
+                new ApiParameterDescription
+                {
+                    Name = "3",
+                    ParameterDescriptor = new ParameterDescriptor { Name = "3" }
+                }
+            };
+
+
+            A.CallTo(() => _httpFunctionParameterProcessor.GetApiParameterDescriptions(method, A<string>._))
+                .Returns(expectedParameterDescriptions);
+
+            var apiDescriptionGroup = _sut.ProcessHttpFunction(method);
+
+            var apiDescription = apiDescriptionGroup.Items.Single();
+            apiDescription.ParameterDescriptions.Should().BeEquivalentTo(expectedParameterDescriptions);
+            apiDescription.ActionDescriptor.Parameters.Should()
+                .BeEquivalentTo(expectedParameterDescriptions.Select(desc => desc.ParameterDescriptor));
+        }
+
+
+        [TestMethod]
+        public void ProcessHttpFunction_AddsSupportedResponseTypes()
+        {
+            var method = GetMethodInfo(nameof(FunctionMethodTestSource.MetadataTestRouteWithPlaceholders));
+            var expectedResponseTypes = new List<ApiResponseType>
+            {
+                new ApiResponseType
+                {
+                    Type = typeof(string)
+                },
+                new ApiResponseType
+                {
+                    Type = typeof(void)
+                }
+            };
+
+
+            A.CallTo(() => _httpFunctionResponseProcessor.GetResponseTypes(method))
+                .Returns(expectedResponseTypes);
+
+            var apiDescriptionGroup = _sut.ProcessHttpFunction(method);
+
+            var apiDescription = apiDescriptionGroup.Items.Single();
+            apiDescription.SupportedResponseTypes.Should().BeEquivalentTo(expectedResponseTypes);
+        }
+
+        private static MethodInfo GetMethodInfo(string methodName)
+        {
+            return typeof(FunctionMethodTestSource).GetMethod(methodName);
         }
 
         private class FunctionMethodTestSource
@@ -225,7 +315,7 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests
 
             [FunctionName(nameof(MetadataTestRouteWithPlaceholders))]
             public void MetadataTestRouteWithPlaceholders(
-                [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "Route/{name}/{date?}/")] HttpRequest req,
+                [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "Route/{name}/{date?}/{id:int}/{anotherId:int?}/")] HttpRequest req,
                 string name,
                 string date)
             {

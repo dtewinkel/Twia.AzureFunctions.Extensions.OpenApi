@@ -42,7 +42,7 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests
             action.Should().Throw<ArgumentNullException>().And.ParamName.Should().Be("documentName");
         }
 
-        [TestMethod]
+        [DataTestMethod]
         [DataRow("")]
         [DataRow(" ")]
         [DataRow("\t")]
@@ -123,7 +123,7 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests
         }
 
 
-        [TestMethod]
+        [DataTestMethod]
         [DataRow("https://example.com/", "BasePath", "https://example.com", "/BasePath")]
         [DataRow("example.com", "/BasePath", "https://example.com", "/BasePath")]
         [DataRow("example.com/", "BasePath/", "https://example.com", "/BasePath")]
@@ -156,7 +156,7 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests
         {
             var assembly = Assembly.GetExecutingAssembly();
 
-            using var stream = assembly.GetManifestResourceStream($"Twia.AzureFunctions.Extensions.OpenApi.UnitTests.{resourceName}");
+            var stream = assembly.GetManifestResourceStream($"Twia.AzureFunctions.Extensions.OpenApi.UnitTests.{resourceName}");
             if (stream == null)
             {
                 throw new ArgumentException($@"'{resourceName}' seems not to be an existing resource.", nameof(resourceName));

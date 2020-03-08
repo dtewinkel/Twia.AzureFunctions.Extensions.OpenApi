@@ -9,7 +9,7 @@
     <FileVersion>0.0.1.0</FileVersion>
     <Authors>TWIA</Authors>
     <Company>TWIA</Company>
-    <Copyright>Copyright © 2019 Twia</Copyright>
+    <Copyright>Copyright © 2020 Twia</Copyright>
 
     <DocumentationFile>bin\$(Configuration)\$(AssemblyName).xml</DocumentationFile>
 
@@ -17,7 +17,7 @@
     <WarningsAsErrors />
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="3.0.2" />
+    <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="3.0.3" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TestAssembly.Client\TestAssembly.Client.csproj" />

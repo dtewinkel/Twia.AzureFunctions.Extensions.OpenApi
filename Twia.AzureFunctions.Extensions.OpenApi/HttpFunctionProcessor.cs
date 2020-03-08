@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using EnsureThat;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
@@ -15,16 +16,21 @@ namespace Twia.AzureFunctions.Extensions.OpenApi
     public class HttpFunctionProcessor : IHttpFunctionProcessor
     {
         private static readonly string[] _defaultMethods = {"get", "post", "put", "delete", "head", "patch", "options"};
+        private static readonly string[] _defaultFormats = {"application/json"};
+        private readonly IHttpFunctionParameterProcessor _httpFunctionParameterProcessor;
         private readonly IHttpFunctionResponseProcessor _httpFunctionResponseProcessor;
         private readonly string _routePrefix;
 
         public HttpFunctionProcessor(
+            IHttpFunctionParameterProcessor httpFunctionParameterProcessor,
             IHttpFunctionResponseProcessor httpFunctionResponseProcessor,
             IOptions<HttpOptions> httpOptions)
         {
+            EnsureArg.IsNotNull(httpFunctionParameterProcessor, nameof(httpFunctionParameterProcessor));
             EnsureArg.IsNotNull(httpFunctionResponseProcessor, nameof(httpFunctionResponseProcessor));
             EnsureArg.IsNotNull(httpOptions, nameof(httpOptions));
 
+            _httpFunctionParameterProcessor = httpFunctionParameterProcessor;
             _httpFunctionResponseProcessor = httpFunctionResponseProcessor;
             _routePrefix = httpOptions.Value.RoutePrefix;
         }
@@ -35,15 +41,17 @@ namespace Twia.AzureFunctions.Extensions.OpenApi
 
             var functionName = GetFunctionName(httpFunctionMethod);
             var httpTriggerAttribute = GetHttpTriggerAttribute(httpFunctionMethod);
-            var route = GetRoute(httpTriggerAttribute, functionName);
             var methods = GetMethods(httpTriggerAttribute);
             var groupName = GetInformationFromApiExplorerSettingsAttribute(httpFunctionMethod);
+            var parameters = _httpFunctionParameterProcessor
+                .GetApiParameterDescriptions(httpFunctionMethod, httpTriggerAttribute.Route)
+                .ToList();
 
             var responseTypes = _httpFunctionResponseProcessor.GetResponseTypes(httpFunctionMethod);
             var apiDescriptions = new List<ApiDescription>();
             foreach (var method in methods)
             {
-                var description = CreateApiDescription(httpFunctionMethod, method, route, functionName, groupName);
+                var description = CreateApiDescription(httpFunctionMethod, method, httpTriggerAttribute.Route, functionName, groupName, parameters);
                 AddResponseTypes(description, responseTypes);
                 apiDescriptions.Add(description);
             }
@@ -89,9 +97,14 @@ namespace Twia.AzureFunctions.Extensions.OpenApi
             }
         }
 
-        private static ApiDescription CreateApiDescription(MethodInfo httpFunctionMethod, string method, string route,
-            string functionName, string groupName)
+        private ApiDescription CreateApiDescription(MethodInfo httpFunctionMethod, string method, string rawRoute,
+            string functionName, string groupName, IList<ApiParameterDescription> parameters)
         {
+            var route = GetRoute(rawRoute, functionName);
+            var parameterDescriptors = parameters
+                .Select(apiParameterDescription => apiParameterDescription.ParameterDescriptor)
+                .ToList();
+
             var description = new ApiDescription
             {
                 HttpMethod = method,
@@ -103,29 +116,44 @@ namespace Twia.AzureFunctions.Extensions.OpenApi
                     MethodInfo = httpFunctionMethod,
                     ControllerName = method,
                     ControllerTypeInfo = httpFunctionMethod.DeclaringType.GetTypeInfo(),
-                    Parameters = new List<ParameterDescriptor>(),
-                    RouteValues = new Dictionary<string, string>()
+                    Parameters = parameterDescriptors,
+                    RouteValues = new Dictionary<string, string>
                     {
                         {"controller", functionName},
                         {"action", method}
                     },
                     ActionName = functionName
-                }
+                },
             };
+
+            foreach (var format in _defaultFormats)
+            {
+                description.SupportedRequestFormats.Add(
+                    new ApiRequestFormat
+                    {
+                        MediaType = format
+                    }
+                );
+            }
+
+            foreach (var apiParameterDescription in parameters)
+            {
+                description.ParameterDescriptions.Add(apiParameterDescription);
+            }
+
             return description;
         }
 
-        private string GetRoute(HttpTriggerAttribute httpTriggerAttribute, string functionName)
+        private string GetRoute(string rawRoute, string functionName)
         {
-            var route = httpTriggerAttribute.Route;
-            if (string.IsNullOrWhiteSpace(route))
+            if (string.IsNullOrWhiteSpace(rawRoute))
             {
-                route = functionName;
+                rawRoute = functionName;
             }
 
-            return $"{_routePrefix}/{route}"
-                .Replace("?", "")
-                .TrimEnd('/');
+            var cleanRoute = Regex.Replace(rawRoute, @"\{(?<name>[^?:}]*)(:[^?}]*)?\??\}", @"{${name}}");
+
+            return $"{_routePrefix}/{cleanRoute}".TrimEnd('/');
         }
     }
 }

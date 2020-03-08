@@ -16,6 +16,7 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.DependencyInjection
 
             services.AddScoped<ISwaggerService, SwaggerService>();
             services.AddSingleton<IHttpFunctionProcessor, HttpFunctionProcessor>();
+            services.AddSingleton<IHttpFunctionParameterProcessor, HttpFunctionParameterProcessor>();
             services.AddSingleton<IHttpFunctionResponseProcessor, HttpFunctionResponseProcessor>();
             services.AddSingleton<IApiDescriptionGroupCollectionProvider, FunctionApiDescriptionGroupCollectionProvider>();
             services.AddSingleton<ISwaggerServiceConfigurationStorage>(new SwaggerServiceConfigurationStorage(functionAssembly));

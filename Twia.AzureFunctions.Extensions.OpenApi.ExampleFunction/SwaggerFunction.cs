@@ -101,7 +101,7 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.ExampleFunction
         {
             var assembly = Assembly.GetExecutingAssembly();
 
-            using var stream = assembly.GetManifestResourceStream($"Twia.AzureFunctions.Extensions.OpenApi.ExampleFunction.{resourceName}");
+            var stream = assembly.GetManifestResourceStream($"Twia.AzureFunctions.Extensions.OpenApi.ExampleFunction.{resourceName}");
             if (stream == null)
             {
                 throw new ArgumentException($@"'{resourceName}' seems not to be an existing resource.", nameof(resourceName));

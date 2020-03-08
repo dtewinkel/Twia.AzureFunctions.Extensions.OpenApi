@@ -115,8 +115,7 @@ namespace Twia.AzureFunctions.Extensions.OpenApi
                         MediaType = "application/json"
                     }
                 };
-                apiResponseType.ModelMetadata =
-                    _modelMetadataProvider.GetMetadataForType(responseType);
+                apiResponseType.ModelMetadata = _modelMetadataProvider.GetMetadataForType(responseType);
             }
 
 
