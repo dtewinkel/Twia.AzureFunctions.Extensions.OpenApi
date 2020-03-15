@@ -1,5 +1,7 @@
 ﻿# Twia.AzureFunctions.Extensions.OpenApi
 
+[![Build Status](https://dev.azure.com/twia/Twia.AzureFunctions.Extensions.OpenApi/_apis/build/status/dtewinkel.Twia.AzureFunctions.Extensions.OpenApi?branchName=master)](https://dev.azure.com/twia/Twia.AzureFunctions.Extensions.OpenApi/_build/latest?definitionId=14&branchName=master)
+
 This library helps to add an endpoint to an [Azure Function](https://azure.microsoft.com/services/functions/) that provide a specification of the provided HTTP trigger endpoints according to the [OpenAPI Specification](https://swagger.io/specification/). This specification is returned as an `OpenApiDocument` from the Microsoft [OpenAPI.NET](https://github.com/Microsoft/OpenAPI.NET) SDK.
 
 The generated document can be converted into a JSON document according to the the specifications in [OpenAPI Specification Version 3.0.2](https://swagger.io/specification/) or [OpenAPI Specification Version 2.0](https://swagger.io/specification/v2/). The OpenAPI Specification Version 2.0 is formerly known as [Swagger RESTful API Documentation Specification](https://swagger.io/specification/v2/).

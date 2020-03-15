@@ -3,5 +3,5 @@ assembly-versioning-scheme: Major
 continuous-delivery-fallback-tag: ''
 branches:
   master:
-    increment: Minor
-next-version: 2.0
+    increment: Patch
+next-version: 2.0.1
