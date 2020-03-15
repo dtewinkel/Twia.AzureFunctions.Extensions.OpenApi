@@ -11,13 +11,13 @@
     <Company>TWIA</Company>
     <Copyright>Copyright © 2020 TWIA</Copyright>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>Support to generate OpenAPI (f.k.a. Swagger) v3 document for HTML triggered functions in Azure Function Apps.
+    <Description>Support to generate an OpenAPI (f.k.a. Swagger) v3 document for HTML triggered functions in Azure Function Apps.
 
 This document can easily be used to generate a Json response, or to generate HTML documentation.</Description>
     <RepositoryType>Git</RepositoryType>
-    <RepositoryUrl>https://dev.azure.com/twia/_git/Twia.AzureFunctions.Extensions.OpenApi</RepositoryUrl>
+    <RepositoryUrl>https://github.com/dtewinkel/Twia.AzureFunctions.Extensions.OpenApi</RepositoryUrl>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
-    <PackageProjectUrl>https://dev.azure.com/twia/Twia.AzureFunctions.Extensions.OpenApi</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/dtewinkel/Twia.AzureFunctions.Extensions.OpenApi</PackageProjectUrl>
     <PackageIcon>logo.png</PackageIcon>
     <PackageIconUrl />
     <PackageTags>openapi swagger json documentation azure function twia</PackageTags>
@@ -27,7 +27,12 @@ This document can easily be used to generate a Json response, or to generate HTM
 
     <CodeAnalysisRuleSet>Twia.AzureFunctions.Extensions.OpenApi.ruleset</CodeAnalysisRuleSet>
 
-    <PackageReleaseNotes>2.0.0
+    <PackageReleaseNotes>
+      2.0.1
+      - Moved project source code to GitHub.
+      - Fixed license in NuGet package.
+
+      2.0.0
       - [Breaking] Renamed types from *Swagger* to *OpenAPi* to provide consistency.
       - Allow OpenApiIgnoreAttribute on class level to completely ignore a class with Azure Function methods.
       - Allow to set Body parameter type through OpenApiBodyTypeAttribute.
