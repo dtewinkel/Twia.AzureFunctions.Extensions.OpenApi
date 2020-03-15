@@ -71,7 +71,6 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.ExampleFunction
         {
             var document = _openApiService.GetOpenApiDocument("v1");
             var documentJson = document.SerializeAsJson(OpenApiSpecVersion.OpenApi2_0);
-            var yaml = document.SerializeAsYaml(OpenApiSpecVersion.OpenApi3_0);
 
             return new HttpResponseMessage
             {
