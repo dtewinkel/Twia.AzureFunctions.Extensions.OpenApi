@@ -9,14 +9,14 @@
     <FileVersion>0.0.1.0</FileVersion>
     <Authors>TWIA, Daniël te Winkel</Authors>
     <Company>TWIA</Company>
-    <Copyright>Copyright © 2020 TWIA</Copyright>
+    <Copyright>Copyright © 2020 TWIA and Contributors</Copyright>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Support to generate an OpenAPI (f.k.a. Swagger) v3 document for HTML triggered functions in Azure Function Apps.
 
 This document can easily be used to generate a Json response, or to generate HTML documentation.</Description>
     <RepositoryType>Git</RepositoryType>
     <RepositoryUrl>https://github.com/dtewinkel/Twia.AzureFunctions.Extensions.OpenApi</RepositoryUrl>
-    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/dtewinkel/Twia.AzureFunctions.Extensions.OpenApi</PackageProjectUrl>
     <PackageIcon>logo.png</PackageIcon>
     <PackageIconUrl />
@@ -42,6 +42,8 @@ This document can easily be used to generate a Json response, or to generate HTM
       - Support for Response types.
       - Support for Body and Path parameter definitions.
 </PackageReleaseNotes>
+
+    <PackageLicenseFile />
   </PropertyGroup>
 
   <ItemGroup>
