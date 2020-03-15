@@ -1,14 +1,91 @@
 ﻿# Twia.AzureFunctions.Extensions.OpenApi
 
-This library helps to add an endpoint to an [Azure Function](https://azure.microsoft.com/services/functions/) that provide a specification of the provided HTTP trigger endpoints according to the [OpenAPI Specification](https://swagger.io/specification/).
+This library helps to add an endpoint to an [Azure Function](https://azure.microsoft.com/services/functions/) that provide a specification of the provided HTTP trigger endpoints according to the [OpenAPI Specification](https://swagger.io/specification/). This specification is returned as an `OpenApiDocument` from the Microsoft [OpenAPI.NET](https://github.com/Microsoft/OpenAPI.NET) SDK.
 
-The generated JSON file follows the specifications in [OpenAPI Specification Version 3.0.2](https://swagger.io/specification/) or [OpenAPI Specification Version 2.0](https://swagger.io/specification/v2/). The OpenAPI Specification Version 2.0 is formerly known as [Swagger RESTful API Documentation Specification](https://swagger.io/specification/v2/).
+The generated document can be converted into a JSON document according to the the specifications in [OpenAPI Specification Version 3.0.2](https://swagger.io/specification/) or [OpenAPI Specification Version 2.0](https://swagger.io/specification/v2/). The OpenAPI Specification Version 2.0 is formerly known as [Swagger RESTful API Documentation Specification](https://swagger.io/specification/v2/).
 
-The JSON documentation can be easily transformed to an HTML page.
+This extension adds logic on top of [Swashbuckle.AspNetCore](https://github.com/domaindrivendev/Swashbuckle.AspNetCore) to detect Azure Function HTTP triggers and extract the information for the parameters and the responses.
 
-This extension adds logic on top of [Swashbuckle.AspNetCore](https://github.com/domaindrivendev/Swashbuckle.AspNetCore) to detect Azure Function HTTP triggers and extract the information for the parameters and the responses for them.
+## Basic usage
 
-## Extracted information
+This package provides an extension method `AddOpenApiService` to register the required dependencies in an `ServiceCollection` and use it through the Microsoft Dependency Injection, for instance using the [Microsoft.Azure.Functions.Extensions.DependencyInjection](https://docs.microsoft.com/bs-cyrl-ba/azure/azure-functions/functions-dotnet-dependency-injection) NuGet package:
+
+Register the dependencies:
+
+```csharp
+using System;
+using Microsoft.Azure.Functions.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
+using Twia.AzureFunctions.Extensions.OpenApi.DependencyInjection;
+
+[assembly: FunctionsStartup(typeof(MyNamespace.Startup))]
+
+namespace MyNamespace
+{
+    public class Startup : FunctionsStartup
+    {
+        public override void Configure(IFunctionsHostBuilder builder)
+        {
+            // Other registrations left out for brevity.
+            var functionAssembly = Assembly.GetExecutingAssembly();
+            builder.Services.AddOpenApiService(functionAssembly, options => ConfigureSwaggerOptions(options, functionAssembly));
+        }
+
+        private static void ConfigureSwaggerOptions(SwaggerGenOptions options, Assembly functionAssembly)
+        {
+            foreach (var xmlDocFilePath in functionAssembly.GetXmlFilePaths())
+            {
+                options.IncludeXmlComments(xmlDocFilePath);
+            }
+
+            options.SwaggerDoc("v1",
+                new OpenApiInfo
+                {
+                    Version = "v1",
+                    Description = "Some great version of the documentation",
+                    Title = "Example Function documentation"
+                });
+        }
+    }
+}
+
+```
+
+To return a JSON serialized ApenAPI document, create an Azure Function that look similar to:
+
+```csharp
+        [FunctionName(nameof(GetOpenApiJson))]
+        public HttpResponseMessage GetOpenApiJson([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "openapi/json")] HttpRequestMessage req)
+        {
+            var document = _openApiService.GetOpenApiDocument("v1");
+            var documentJson = document.SerializeAsJson(OpenApiSpecVersion.OpenApi3_0);
+
+            return new HttpResponseMessage
+            {
+                Content = new StringContent(documentJson, Encoding.UTF8, "application/json")
+            };
+        }
+```
+
+
+### Serialize as JSON or YAML
+
+The [OpenAPI.NET](https://github.com/Microsoft/OpenAPI.NET) SDK has a number of extensions to serialize the OpenAPI document to JSON or to YAML.
+
+Some examples are:
+
+```csharp
+var document = _openApiService.GetOpenApiDocument("v1");
+var openApiV2Json = document.SerializeAsJson(OpenApiSpecVersion.OpenApi2_0);
+var openApiV3Json = document.SerializeAsJson(OpenApiSpecVersion.OpenApi3_0);
+var openApiV3yaml = document.SerializeAsYaml(OpenApiSpecVersion.OpenApi3_0);
+```
+
+## Generate HTML page
+
+ 
+
+## Extracted information from Azure Functions
 
 This extension will automatically detect the HTTP function methods and include them in the specification.
 
@@ -27,7 +104,7 @@ All parameters to a function method are ignored for the documentation unless the
 
 #### Included body parameter
 
-The body parameter is inffered from the type of the parameter with the `HttpTriggerAttribute`. If the type is not `HttpRequestMessage` and not `HttpRequest` then this type is taken as body parameter.
+The body parameter is inferred from the type of the parameter with the `HttpTriggerAttribute`. If the type is not `HttpRequestMessage` and not `HttpRequest` then this type is taken as body parameter.
 
 #### Included path parameters
 

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
+using Twia.AzureFunctions.Extensions.OpenApi.Documentation;
 
 namespace Twia.AzureFunctions.Extensions.OpenApi.ExampleFunction.ExampleHttpFunctions
 {
@@ -17,7 +18,7 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.ExampleFunction.ExampleHttpFunc
         /// <summary>
         /// Function implementing just a default HTTP request parameter.
         /// </summary>
-        /// <param name="req"></param>
+        /// <param name="req">Unused request parameter.</param>
         [FunctionName(nameof(HttpRequestParameter))]
         public void HttpRequestParameter(
             // ReSharper disable once UnusedParameter.Global
@@ -29,11 +30,27 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.ExampleFunction.ExampleHttpFunc
         }
 
         /// <summary>
+        /// Function implementing just a default HTTP request parameter.
+        /// </summary>
+        /// <param name="req">The request type in the body.</param>
+        [FunctionName(nameof(ExampleRequestBodyParameterThroughAttribute))]
+        public void ExampleRequestBodyParameterThroughAttribute(
+            // ReSharper disable once UnusedParameter.Global
+#pragma warning disable IDE0060 // Remove unused parameter
+            [OpenApiBodyType(typeof(ExampleRequest))]
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post")]
+            HttpRequest req)
+#pragma warning restore IDE0060 // Remove unused parameter
+        {
+            // Nothing to return here.
+        }
+
+        /// <summary>
         /// Function implementing an custom type on the trigger as Body parameter.
         /// </summary>
         /// <param name="req">A example body type.</param>
-        [FunctionName(nameof(ExampleRequestParameterParameter))]
-        public void ExampleRequestParameterParameter(
+        [FunctionName(nameof(ExampleRequestBodyParameter))]
+        public void ExampleRequestBodyParameter(
             // ReSharper disable once UnusedParameter.Global
 #pragma warning disable IDE0060 // Remove unused parameter
             [HttpTrigger(AuthorizationLevel.Anonymous, "post")] ExampleRequest req)
@@ -45,7 +62,7 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.ExampleFunction.ExampleHttpFunc
         /// <summary>
         /// Function implementing an custom type on the trigger as Body parameter.
         /// </summary>
-        /// <param name="req">A example body type.</param>
+        /// <param name="req">No body.</param>
         /// <param name="id">An ID of some sort, as long as it is an integer number.</param>
         [FunctionName(nameof(ExamplePathParameter))]
         public void ExamplePathParameter(
@@ -80,7 +97,7 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.ExampleFunction.ExampleHttpFunc
         /// <summary>
         /// Function implementing an custom type on the trigger as Body parameter.
         /// </summary>
-        /// <param name="req">The data the id is referencing.</param>
+        /// <param name="req">The data in the body that the id is referencing to.</param>
         /// <param name="id">An ID of some sort, as long as it is an integer number.</param>
         /// <returns>An IActionResult.</returns>
         [FunctionName(nameof(ExampleBodyAndPathParameter))]

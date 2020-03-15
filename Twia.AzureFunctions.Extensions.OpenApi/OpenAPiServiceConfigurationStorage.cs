@@ -3,9 +3,9 @@ using EnsureThat;
 
 namespace Twia.AzureFunctions.Extensions.OpenApi
 {
-    public class SwaggerServiceConfigurationStorage : ISwaggerServiceConfigurationStorage
+    public class OpenApiServiceConfigurationStorage : IOpenApiServiceConfigurationStorage
     {
-        public SwaggerServiceConfigurationStorage(Assembly functionAssembly)
+        public OpenApiServiceConfigurationStorage(Assembly functionAssembly)
         {
             EnsureArg.IsNotNull(functionAssembly, nameof(functionAssembly));
 

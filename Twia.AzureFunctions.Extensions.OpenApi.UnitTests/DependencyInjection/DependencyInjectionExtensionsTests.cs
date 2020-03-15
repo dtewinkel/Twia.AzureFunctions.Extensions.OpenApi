@@ -15,56 +15,56 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests.DependencyInjection
         private static readonly Assembly _assembly = typeof(DependencyInjectionExtensionsTests).Assembly;
 
         [TestMethod]
-        public void AddSwaggerService_WithNullForServices_ThrowsException()
+        public void AddOpenApiService_WithNullForServices_ThrowsException()
         {
             var assembly = typeof(DependencyInjectionExtensionsTests).Assembly;
             IServiceCollection services = null;
 
             // ReSharper disable once ExpressionIsAlwaysNull
-            Action action = () => services.AddSwaggerService(assembly);
+            Action action = () => services.AddOpenApiService(assembly);
 
             action.Should().Throw<ArgumentNullException>().And.ParamName.Should().Be("services");
         }
 
         [TestMethod]
-        public void AddSwaggerService_WithNullForFunctionAssembly_ThrowsException()
+        public void AddOpenApiService_WithNullForFunctionAssembly_ThrowsException()
         {
             var services = new ServiceCollection();
 
-            Action action = () => services.AddSwaggerService(null);
+            Action action = () => services.AddOpenApiService(null);
 
             action.Should().Throw<ArgumentNullException>().And.ParamName.Should().Be("functionAssembly");
         }
 
         [TestMethod]
-        public void AddSwaggerService_ReturnsConstructedServices()
+        public void AddOpenApiService_ReturnsConstructedServices()
         {
             var serviceProvider = BuildServiceProvider();
 
-            var swaggerService = serviceProvider.GetService(typeof(ISwaggerService));
+            var openApiService = serviceProvider.GetService(typeof(IOpenApiService));
 
-            swaggerService.Should().NotBeNull();
+            openApiService.Should().NotBeNull();
         }
 
         [TestMethod]
-        public void AddSwaggerService_StoresAssemblyInCorrectInstance()
+        public void AddOpenApiService_StoresAssemblyInCorrectInstance()
         {
             var serviceProvider = BuildServiceProvider();
 
-            var configurationStorage = serviceProvider.GetService(typeof(ISwaggerServiceConfigurationStorage)) as ISwaggerServiceConfigurationStorage;
+            var configurationStorage = serviceProvider.GetService(typeof(IOpenApiServiceConfigurationStorage)) as IOpenApiServiceConfigurationStorage;
 
             configurationStorage.Should().NotBeNull();
             configurationStorage.FunctionAssembly.Should().BeSameAs(_assembly);
         }
 
         [TestMethod]
-        public void AddSwaggerService_UsesSetupSwaggerGen()
+        public void AddOpenApiService_UsesSetupSwaggerGen()
         {
             var isExecuted = false;
 
             var serviceProvider = BuildServiceProvider(options => { isExecuted = true;});
 
-            var configurationStorage = serviceProvider.GetService(typeof(ISwaggerService));
+            var configurationStorage = serviceProvider.GetService(typeof(IOpenApiService));
 
             configurationStorage.Should().NotBeNull();
             isExecuted.Should().BeTrue();
@@ -82,7 +82,7 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests.DependencyInjection
             services.AddLogging();
             services.AddMvc();
 
-            services.AddSwaggerService(_assembly, setupSwaggerGen);
+            services.AddOpenApiService(_assembly, setupSwaggerGen);
 
             return services.BuildServiceProvider();
         }

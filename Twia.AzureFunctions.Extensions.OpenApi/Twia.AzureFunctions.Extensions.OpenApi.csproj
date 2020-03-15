@@ -11,7 +11,9 @@
     <Company>TWIA</Company>
     <Copyright>Copyright © 2020 TWIA</Copyright>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>Support to generate OpenAPI or Swagger Json documentation document for Azure Function Apps.</Description>
+    <Description>Support to generate OpenAPI (f.k.a. Swagger) v3 document for HTML triggered functions in Azure Function Apps.
+
+This document can easily be used to generate a Json response, or to generate HTML documentation.</Description>
     <RepositoryType>Git</RepositoryType>
     <RepositoryUrl>https://dev.azure.com/twia/_git/Twia.AzureFunctions.Extensions.OpenApi</RepositoryUrl>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
@@ -25,29 +27,34 @@
 
     <CodeAnalysisRuleSet>Twia.AzureFunctions.Extensions.OpenApi.ruleset</CodeAnalysisRuleSet>
 
-    <PackageReleaseNotes>1.0.0 - Initial Minimal Viable Release. 
- - Support for Response types.
- - Support for Body and Path parameter definitions.
+    <PackageReleaseNotes>2.0.0
+      - [Breaking] Renamed types from *Swagger* to *OpenAPi* to provide consistency.
+      - Allow OpenApiIgnoreAttribute on class level to completely ignore a class with Azure Function methods.
+      - Allow to set Body parameter type through OpenApiBodyTypeAttribute.
+      - Improved documentation.
+
+      1.0.0 - Initial Minimal Viable Release.
+      - Support for Response types.
+      - Support for Body and Path parameter definitions.
 </PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Ensure.That" Version="8.1.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.ApiExplorer" Version="2.2.0" />
-    <PackageReference Include="Microsoft.Azure.WebJobs.Core" Version="3.0.14" />
+    <PackageReference Include="Ensure.That" Version="8.2.0" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="3.0.2" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.1.2" />
-    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="5.0.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="5.1.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="..\LICENSE.txt">
+    <Content Include="..\LICENSE.txt">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
-    </None>
+    </Content>
     <None Include="logo.png">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 

@@ -20,7 +20,7 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.ExampleFunction
             var functionAssembly = Assembly.GetExecutingAssembly();
             var services = builder.Services;
 
-            services.AddSwaggerService(functionAssembly, options => ConfigureSwaggerOptions(options, functionAssembly));
+            services.AddOpenApiService(functionAssembly, options => ConfigureSwaggerOptions(options, functionAssembly));
         }
 
         private static void ConfigureSwaggerOptions(SwaggerGenOptions options, Assembly functionAssembly)

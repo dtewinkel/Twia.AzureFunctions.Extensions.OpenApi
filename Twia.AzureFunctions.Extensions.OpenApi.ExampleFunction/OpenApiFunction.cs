@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.OpenApi;
+using Microsoft.OpenApi.Extensions;
+using Microsoft.OpenApi.Models;
 using Twia.AzureFunctions.Extensions.OpenApi.Documentation;
 
 namespace Twia.AzureFunctions.Extensions.OpenApi.ExampleFunction
@@ -14,17 +16,18 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.ExampleFunction
     /// <summary>
     /// Functions to get Swagger or Open API documentation.
     /// </summary>
-    public class SwaggerFunction
+    [OpenApiIgnore]
+    public class OpenApiFunction
     {
-        private readonly ISwaggerService _swaggerService;
+        private readonly IOpenApiService _openApiService;
 
         /// <summary>
         /// Create a new instance of the SwaggerFunction type.
         /// </summary>
-        /// <param name="swaggerService">The service implementation to use.</param>
-        public SwaggerFunction(ISwaggerService swaggerService)
+        /// <param name="openApiService">The service implementation to use.</param>
+        public OpenApiFunction(IOpenApiService openApiService)
         {
-            _swaggerService = swaggerService;
+            _openApiService = openApiService;
         }
 
         /// <summary>
@@ -34,7 +37,7 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.ExampleFunction
         /// <param name="documentName">The name of the document version to retrieve. Can be 'v1' or 'v2'. Optional. If not set 'v1' will be used.</param>
         /// <returns>The Swagger documentation for all documented HTTP triggers in this function.</returns>
         /// <response code="200">Json representation of documentation.</response>
-        [ProducesResponseType(typeof(string), 200)]
+        [ProducesResponseType(typeof(OpenApiDocument), 200)]
         [FunctionName(nameof(GetOpenApiV3))]
         public HttpResponseMessage GetOpenApiV3(
 #pragma warning disable IDE0060 // Remove unused parameter
@@ -42,7 +45,9 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.ExampleFunction
             string documentName)
 #pragma warning restore IDE0060 // Remove unused parameter
         {
-            var documentJson = _swaggerService.GetSwaggerJson(documentName ?? "v1");
+            var document = _openApiService.GetOpenApiDocument(documentName ?? "v1");
+            var documentJson = document.SerializeAsJson(OpenApiSpecVersion.OpenApi3_0);
+
             return new HttpResponseMessage
             {
                 Content = new StringContent(documentJson, Encoding.UTF8, "application/json")
@@ -56,7 +61,7 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.ExampleFunction
         /// <param name="documentName">The name of the document version to retrieve. Can be 'v1' or 'v2'. Optional. If not set 'v1' will be used.</param>
         /// <returns>The Swagger documentation for all documented HTTP triggers in this function.</returns>
         ///  <response code="200">Json representation of documentation.</response>
-        [ProducesResponseType(typeof(string), 200)]
+        [ProducesResponseType(typeof(OpenApiDocument), 200)]
         [FunctionName(nameof(GetSwagger))]
         public HttpResponseMessage GetSwagger(
 #pragma warning disable IDE0060 // Remove unused parameter
@@ -64,7 +69,10 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.ExampleFunction
             string documentName)
 #pragma warning restore IDE0060 // Remove unused parameter
         {
-            var documentJson = _swaggerService.GetSwaggerJson(documentName ?? "v1", openApiSpecVersion: OpenApiSpecVersion.OpenApi2_0);
+            var document = _openApiService.GetOpenApiDocument("v1");
+            var documentJson = document.SerializeAsJson(OpenApiSpecVersion.OpenApi2_0);
+            var yaml = document.SerializeAsYaml(OpenApiSpecVersion.OpenApi3_0);
+
             return new HttpResponseMessage
             {
                 Content = new StringContent(documentJson, Encoding.UTF8, "application/json")
@@ -77,10 +85,7 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.ExampleFunction
         /// <param name="req">The request on the HTTP trigger.</param>
         /// <param name="documentName">The name of the document version to retrieve. Can be 'v1' or 'v2'. Optional. If not set 'v1' will be used.</param>
         /// <returns>The Swagger documentation UI for all documented HTTP triggers in this function.</returns>
-        ///  <response code="200">HTTP page with the generated swagger documentation.</response>
-        [ProducesResponseType(typeof(string), 200)]
         [FunctionName(nameof(GetSwaggerUi))]
-        [OpenApiIgnore]
         public HttpResponseMessage GetSwaggerUi(
 #pragma warning disable IDE0060 // Remove unused parameter
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "openapi/ui/{documentName?}")] HttpRequestMessage req,

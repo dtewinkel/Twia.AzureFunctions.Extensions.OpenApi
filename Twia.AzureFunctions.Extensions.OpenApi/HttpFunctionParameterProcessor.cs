@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
@@ -9,6 +10,7 @@ using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Azure.WebJobs;
+using Twia.AzureFunctions.Extensions.OpenApi.Documentation;
 
 namespace Twia.AzureFunctions.Extensions.OpenApi
 {
@@ -43,9 +45,9 @@ namespace Twia.AzureFunctions.Extensions.OpenApi
                 yield return bodyParameter;
             }
 
-            foreach (var bodyParameter in GetPathParameters(functionMethod, route))
+            foreach (var pathParameter in GetPathParameters(functionMethod, route))
             {
-                yield return bodyParameter;
+                yield return pathParameter;
             }
         }
 
@@ -60,9 +62,18 @@ namespace Twia.AzureFunctions.Extensions.OpenApi
         {
             var triggerParameter = functionMethod
                 .GetParameters()
-                .Where(parameter => parameter.GetCustomAttributes(typeof(HttpTriggerAttribute), false).Any())
-                .SingleOrDefault(parameter => !_untypedTriggerParameters.Contains(parameter.ParameterType.FullName));
-            if (triggerParameter != null)
+                .First(parameter => parameter.GetCustomAttributes(typeof(HttpTriggerAttribute), false).Any());
+
+            // First try OpenApiBodyTypeAttribute, regardless of the parameter's own type.
+            var fromBodyAttribute = triggerParameter.GetCustomAttributes(typeof(OpenApiBodyTypeAttribute))
+                .Cast<OpenApiBodyTypeAttribute>().FirstOrDefault();
+            if (fromBodyAttribute != null)
+            {
+                yield return CreateApiParameterDescription(triggerParameter.Name, fromBodyAttribute.Type, BindingSource.Body);
+            }
+
+            var isTyped = !_untypedTriggerParameters.Contains(triggerParameter.ParameterType.FullName);
+            if (isTyped)
             {
                 yield return CreateApiParameterDescription(triggerParameter, BindingSource.Body);
             }
@@ -73,7 +84,12 @@ namespace Twia.AzureFunctions.Extensions.OpenApi
             var name = parameter.Name;
             var type = parameter.ParameterType;
 
-            return new ApiParameterDescription
+            return CreateApiParameterDescription(name, type, bindingSource);
+        }
+
+        private ApiParameterDescription CreateApiParameterDescription(string name, Type type, BindingSource bindingSource)
+        {
+            var description = new ApiParameterDescription
             {
                 Name = name,
                 Type = type,
@@ -85,6 +101,7 @@ namespace Twia.AzureFunctions.Extensions.OpenApi
                     ParameterType = type
                 }
             };
+            return description;
         }
     }
 }

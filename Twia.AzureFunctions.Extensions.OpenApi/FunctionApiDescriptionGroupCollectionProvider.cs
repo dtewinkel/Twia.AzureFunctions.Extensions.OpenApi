@@ -11,11 +11,11 @@ namespace Twia.AzureFunctions.Extensions.OpenApi
 {
     public class FunctionApiDescriptionGroupCollectionProvider : IApiDescriptionGroupCollectionProvider
     {
-        private readonly ISwaggerServiceConfigurationStorage _configuration;
+        private readonly IOpenApiServiceConfigurationStorage _configuration;
         private readonly IHttpFunctionProcessor _httpFunctionMethodProcessor;
 
         public FunctionApiDescriptionGroupCollectionProvider(
-            ISwaggerServiceConfigurationStorage configuration,
+            IOpenApiServiceConfigurationStorage configuration,
             IHttpFunctionProcessor httpFunctionMethodProcessor)
         {
             EnsureArg.IsNotNull(configuration, nameof(configuration));
@@ -39,11 +39,12 @@ namespace Twia.AzureFunctions.Extensions.OpenApi
         private IEnumerable<MethodInfo> GetHttpFunctionMethods()
         {
             return _configuration.FunctionAssembly.GetTypes()
-                    .SelectMany(t => t.GetMethods())
-                    .Where(m => m.GetCustomAttributes(typeof(FunctionNameAttribute), false).Any())
-                    .Where(m => m.GetParameters().Any(p => p.GetCustomAttributes(typeof(HttpTriggerAttribute), false).Any()))
-                    .Where(m => !m.GetCustomAttributes(typeof(OpenApiIgnoreAttribute), false).Any())
-                    .Where(m => !m.GetCustomAttributes(typeof(ApiExplorerSettingsAttribute), false).Cast<ApiExplorerSettingsAttribute>().Any(a => a.IgnoreApi));
+                .Where(t => !t.GetCustomAttributes(typeof(OpenApiIgnoreAttribute), false).Any())
+                .SelectMany(t => t.GetMethods())
+                .Where(m => m.GetCustomAttributes(typeof(FunctionNameAttribute), false).Any())
+                .Where(m => m.GetParameters().Any(p => p.GetCustomAttributes(typeof(HttpTriggerAttribute), false).Any()))
+                .Where(m => !m.GetCustomAttributes(typeof(OpenApiIgnoreAttribute), false).Any())
+                .Where(m => !m.GetCustomAttributes(typeof(ApiExplorerSettingsAttribute), false).Cast<ApiExplorerSettingsAttribute>().Any(a => a.IgnoreApi));
         }
     }
 }

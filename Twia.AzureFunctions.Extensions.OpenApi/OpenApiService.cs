@@ -1,30 +1,28 @@
 using System.Text.RegularExpressions;
 using EnsureThat;
-using Microsoft.OpenApi;
-using Microsoft.OpenApi.Extensions;
+using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace Twia.AzureFunctions.Extensions.OpenApi
 {
-    public class SwaggerService : ISwaggerService
+    public class OpenApiService : IOpenApiService
     {
         private readonly ISwaggerProvider _swaggerProvider;
 
-        public SwaggerService(ISwaggerProvider swaggerProvider)
+        public OpenApiService(ISwaggerProvider swaggerProvider)
         {
             EnsureArg.IsNotNull(swaggerProvider, nameof(swaggerProvider));
 
             _swaggerProvider = swaggerProvider;
         }
 
-        public string GetSwaggerJson(string documentName, string host = null, string basePath = null, OpenApiSpecVersion openApiSpecVersion = OpenApiSpecVersion.OpenApi3_0)
+        public OpenApiDocument GetOpenApiDocument(string documentName, string host = null, string basePath = null)
         {
             EnsureArg.IsNotNullOrWhiteSpace(documentName, nameof(documentName));
 
             var (cleanHost, cleanBasePath) = CleanHostAndBasePath(host, basePath);
 
-            var document = _swaggerProvider.GetSwagger(documentName, cleanHost, cleanBasePath);
-            return document.SerializeAsJson(openApiSpecVersion);
+            return _swaggerProvider.GetSwagger(documentName, cleanHost, cleanBasePath);
         }
 
         private static (string cleanHost, string cleanBasePath) CleanHostAndBasePath(string host, string basePath)

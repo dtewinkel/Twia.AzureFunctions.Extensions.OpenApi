@@ -15,7 +15,7 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests
     [TestClass]
     public class FunctionApiDescriptionGroupCollectionProviderTests
     {
-        private ISwaggerServiceConfigurationStorage _configuration;
+        private IOpenApiServiceConfigurationStorage _configuration;
         private IHttpFunctionProcessor _functionProcessor;
         private FunctionApiDescriptionGroupCollectionProvider _sut;
         private readonly Assembly _exampleAssembly = AssemblyHelper.GetFunctionAssembly("../../../../Twia.AzureFunctions.Extensions.OpenApi.ExampleFunction", "*.ExampleFunction.dll");
@@ -24,7 +24,9 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests
         [TestInitialize]
         public void TestInitialize()
         {
-            _expectedMethodNames = _exampleAssembly.GetTypes()
+            var types = _exampleAssembly.GetTypes()
+                .Where(t => !t.GetCustomAttributes(typeof(OpenApiIgnoreAttribute), false).Any());
+            _expectedMethodNames = types
                 .SelectMany(t => t.GetMethods())
                 .Where(m => m.GetCustomAttributes(typeof(FunctionNameAttribute), false).Any())
                 .Where(m => m.GetParameters().Any(p => p.GetCustomAttributes(typeof(HttpTriggerAttribute), false).Any()))
@@ -33,7 +35,7 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests
                 .Select(methodInfo => $"{methodInfo.DeclaringType?.FullName ?? ""}.{methodInfo.Name}")
                 .ToArray();
 
-            _configuration = A.Fake<ISwaggerServiceConfigurationStorage>();
+            _configuration = A.Fake<IOpenApiServiceConfigurationStorage>();
             _functionProcessor = A.Fake<IHttpFunctionProcessor>();
 
             A.CallTo(() => _configuration.FunctionAssembly).Returns(_exampleAssembly);

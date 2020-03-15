@@ -1,19 +1,14 @@
 ﻿using System;
-using System.IO;
-using System.Reflection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using FakeItEasy;
 using FluentAssertions;
-using FluentAssertions.Json;
-using Microsoft.OpenApi;
 using Microsoft.OpenApi.Models;
-using Newtonsoft.Json.Linq;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests
 {
     [TestClass]
-    public class SwaggerServiceTests
+    public class OpenApiServiceTests
     {
         private ISwaggerProvider _swaggerProvider;
 
@@ -27,17 +22,17 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests
         public void Constructor_WithNullForSwaggerProvider_ThrowsException()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Action action = () => new SwaggerService(null);
+            Action action = () => new OpenApiService(null);
 
             action.Should().Throw<ArgumentNullException>().And.ParamName.Should().Be("swaggerProvider");
         }
 
         [TestMethod]
-        public void GetSwaggerJson_WithNullForDocumentName_ThrowsException()
+        public void GetOpenApiDocument_WithNullForDocumentName_ThrowsException()
         {
-            var sut = new SwaggerService(_swaggerProvider);
+            var sut = new OpenApiService(_swaggerProvider);
 
-            Action action = () => sut.GetSwaggerJson(null);
+            Action action = () => sut.GetOpenApiDocument(null);
 
             action.Should().Throw<ArgumentNullException>().And.ParamName.Should().Be("documentName");
         }
@@ -47,36 +42,35 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests
         [DataRow(" ")]
         [DataRow("\t")]
         [DataRow("   ")]
-        public void GetSwaggerJson_WithInvalidDataForDocumentName_ThrowsException(string documentName)
+        public void GetOpenApiDocument_WithInvalidDataForDocumentName_ThrowsException(string documentName)
         {
-            var sut = new SwaggerService(_swaggerProvider);
+            var sut = new OpenApiService(_swaggerProvider);
 
-            Action action = () => sut.GetSwaggerJson(documentName);
+            Action action = () => sut.GetOpenApiDocument(documentName);
 
             action.Should().Throw<ArgumentException>().And.ParamName.Should().Be("documentName");
         }
 
         [TestMethod]
-        public void GetSwaggerJson_PassesOnDocumentName()
+        public void GetOpenApiDocument_PassesOnDocumentName()
         {
             var documentName = "myDocumentName";
             var openApiDocument = new OpenApiDocument();
 
             A.CallTo(() => _swaggerProvider.GetSwagger(documentName, null, null)).Returns(openApiDocument);
 
-            var sut = new SwaggerService(_swaggerProvider);
+            var sut = new OpenApiService(_swaggerProvider);
 
-            var jsonDocument = sut.GetSwaggerJson(documentName);
+            var document = sut.GetOpenApiDocument(documentName);
 
             A.CallTo(() => _swaggerProvider.GetSwagger(documentName, null, null)).MustHaveHappenedOnceExactly();
-            jsonDocument.Should().NotBeNullOrWhiteSpace();
+            document.Should().NotBeNull();
         }
 
         [TestMethod]
-        public void GetSwaggerJson_ForOpenApi2_ReturnsCorrectJson()
+        public void GetOpenApiDocument_ReturnsCorrectJ()
         {
             const string documentName = "myDocumentName";
-            var expectedJson = ReadJsonFromResource("Testdata.SwaggerService.OpenApi2_0.json");
             var openApiDocument = new OpenApiDocument
             {
                 Info = new OpenApiInfo
@@ -88,20 +82,17 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests
             };
             A.CallTo(() => _swaggerProvider.GetSwagger(documentName, null, null)).Returns(openApiDocument);
 
-            var sut = new SwaggerService(_swaggerProvider);
+            var sut = new OpenApiService(_swaggerProvider);
 
-            var jsonDocument = sut.GetSwaggerJson(documentName, openApiSpecVersion: OpenApiSpecVersion.OpenApi2_0);
+            var document = sut.GetOpenApiDocument(documentName);
 
-            var json = JToken.Parse(jsonDocument);
-
-            json.Should().BeEquivalentTo(expectedJson);
+            document.Should().BeEquivalentTo(openApiDocument);
         }
 
         [TestMethod]
-        public void GetSwaggerJson_ForOpenApi3_ReturnsCorrectJson()
+        public void GetOpenApiDocument_ForOpenApi3_ReturnsCorrectJson()
         {
             const string documentName = "myDocumentName";
-            var expectedJson = ReadJsonFromResource("Testdata.SwaggerService.OpenApi3_0.json");
             var openApiDocument = new OpenApiDocument
             {
                 Info = new OpenApiInfo
@@ -113,13 +104,11 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests
             };
             A.CallTo(() => _swaggerProvider.GetSwagger(documentName, null, null)).Returns(openApiDocument);
 
-            var sut = new SwaggerService(_swaggerProvider);
+            var sut = new OpenApiService(_swaggerProvider);
 
-            var jsonDocument = sut.GetSwaggerJson(documentName);
+            var document = sut.GetOpenApiDocument(documentName);
 
-            var json = JToken.Parse(jsonDocument);
-
-            json.Should().BeEquivalentTo(expectedJson);
+            document.Should().BeEquivalentTo(openApiDocument);
         }
 
 
@@ -138,31 +127,18 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests
         [DataRow(null, "/example", null, "/example")]
         [DataRow("  ", "/example", null, "/example")]
         [DataRow("", "/example", null, "/example")]
-        public void GetSwaggerJson_ForHostAndBasePath_PassesOnCorrectHostAndBasePath(string host, string basePath, string expectedHost, string expectedBasePath)
+        public void GetOpenApiDocument_ForHostAndBasePath_PassesOnCorrectHostAndBasePath(string host, string basePath, string expectedHost, string expectedBasePath)
         {
             const string documentName = "myDocumentName";
             var openApiDocument = new OpenApiDocument();
             A.CallTo(() => _swaggerProvider.GetSwagger(documentName, A<string>._, A<string>._)).Returns(openApiDocument);
 
-            var sut = new SwaggerService(_swaggerProvider);
+            var sut = new OpenApiService(_swaggerProvider);
 
-            var jsonDocument = sut.GetSwaggerJson(documentName,host, basePath);
+            var document = sut.GetOpenApiDocument(documentName,host, basePath);
 
-            jsonDocument.Should().NotBeNullOrWhiteSpace();
+            document.Should().NotBeNull();
             A.CallTo(() => _swaggerProvider.GetSwagger(documentName, expectedHost, expectedBasePath)).MustHaveHappenedOnceExactly();
-        }
-
-        private static JToken ReadJsonFromResource(string resourceName)
-        {
-            var assembly = Assembly.GetExecutingAssembly();
-
-            var stream = assembly.GetManifestResourceStream($"Twia.AzureFunctions.Extensions.OpenApi.UnitTests.{resourceName}");
-            if (stream == null)
-            {
-                throw new ArgumentException($@"'{resourceName}' seems not to be an existing resource.", nameof(resourceName));
-            }
-            using var reader = new StreamReader(stream);
-            return JToken.Parse(reader.ReadToEnd());
         }
     }
 }

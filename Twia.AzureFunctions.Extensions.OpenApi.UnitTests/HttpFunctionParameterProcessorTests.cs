@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Twia.AzureFunctions.Extensions.OpenApi.Documentation;
 
 namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests
 {
@@ -59,11 +60,10 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests
             parameters.Should().BeEmpty();
         }
 
-
         [TestMethod]
-        public void GetApiParameterDescriptions_WithBodyParameters_ReturnsBodyParameter()
+        public void GetApiParameterDescriptions_WithBodyParameter_ReturnsBodyParameter()
         {
-            var method = GetMethodInfo(nameof(FunctionMethodTestSource.BodyParameters));
+            var method = GetMethodInfo(nameof(FunctionMethodTestSource.BodyParameter));
             var expectedParameter = new ApiParameterDescription
             {
                 Name = "body",
@@ -72,6 +72,30 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests
                 ParameterDescriptor = new ParameterDescriptor
                 {
                     Name = "body",
+                    ParameterType = typeof(RequestType)
+                }
+            };
+
+            var parameters = _sut.GetApiParameterDescriptions(method, null);
+
+            parameters.Should().NotBeNull();
+            parameters.Should().HaveCount(1);
+            var parameter = parameters.Single();
+            parameter.Should().BeEquivalentTo(expectedParameter);
+        }
+
+        [TestMethod]
+        public void GetApiParameterDescriptions_WithBodyAttribute_ReturnsBodyParameter()
+        {
+            var method = GetMethodInfo(nameof(FunctionMethodTestSource.BodyAttribute));
+            var expectedParameter = new ApiParameterDescription
+            {
+                Name = "request",
+                Type = typeof(RequestType),
+                Source = BindingSource.Body,
+                ParameterDescriptor = new ParameterDescriptor
+                {
+                    Name = "request",
                     ParameterType = typeof(RequestType)
                 }
             };
@@ -101,7 +125,15 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests
                 // Nothing to do here.
             }
 
-            public void BodyParameters([HttpTrigger(AuthorizationLevel.Anonymous)] RequestType body)
+            public void BodyParameter([HttpTrigger(AuthorizationLevel.Anonymous)] RequestType body)
+            {
+                // Nothing to do here.
+            }
+
+            public void BodyAttribute(
+                [OpenApiBodyType(typeof(RequestType))]
+                [HttpTrigger(AuthorizationLevel.Anonymous)]
+                HttpRequestMessage request)
             {
                 // Nothing to do here.
             }

@@ -2,7 +2,7 @@
 
 namespace Twia.AzureFunctions.Extensions.OpenApi
 {
-    public interface ISwaggerServiceConfigurationStorage
+    public interface IOpenApiServiceConfigurationStorage
     {
         Assembly FunctionAssembly { get; }
     }

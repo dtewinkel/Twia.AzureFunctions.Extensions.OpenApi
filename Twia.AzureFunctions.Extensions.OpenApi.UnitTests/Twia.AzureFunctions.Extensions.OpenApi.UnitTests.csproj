@@ -19,7 +19,8 @@
   <ItemGroup>
     <PackageReference Include="FakeItEasy" Version="6.0.0" />
     <PackageReference Include="FluentAssertions" Version="5.10.2" />
-    <PackageReference Include="FluentAssertions.Json" Version="5.4.1" />
+    <PackageReference Include="FluentAssertions.Json" Version="5.5.0" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions" Version="3.0.6" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
     <PackageReference Include="MSTest.TestAdapter" Version="2.1.0" />
     <PackageReference Include="MSTest.TestFramework" Version="2.1.0" />
@@ -27,11 +28,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Twia.AzureFunctions.Extensions.OpenApi\Twia.AzureFunctions.Extensions.OpenApi.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="Testdata\SwaggerService.OpenApi2_0.json" />
-    <EmbeddedResource Include="Testdata\SwaggerService.OpenApi3_0.json" />
   </ItemGroup>
 
 </Project>
