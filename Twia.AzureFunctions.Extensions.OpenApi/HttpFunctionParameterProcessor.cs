@@ -55,7 +55,7 @@ namespace Twia.AzureFunctions.Extensions.OpenApi
         {
             return functionMethod.GetParameters()
                 .Where(parameterInfo => Regex.IsMatch(route, $"\\{{{parameterInfo.Name}(:[^?}}]*)?\\??\\}}"))
-                .Select(parameterInfo => CreateApiParameterDescription(parameterInfo, BindingSource.Path));
+                .Select(parameterInfo => CreateApiParameterDescription(parameterInfo, BindingSource.Path, Regex.IsMatch(route, $"\\{{{parameterInfo.Name}(:[^?}}]*)?\\?\\}}")));
         }
 
         private IEnumerable<ApiParameterDescription> GetBodyParameters(MethodInfo functionMethod)
@@ -69,25 +69,25 @@ namespace Twia.AzureFunctions.Extensions.OpenApi
                 .Cast<OpenApiBodyTypeAttribute>().FirstOrDefault();
             if (fromBodyAttribute != null)
             {
-                yield return CreateApiParameterDescription(triggerParameter.Name, fromBodyAttribute.Type, BindingSource.Body);
+                yield return CreateApiParameterDescription(triggerParameter.Name, fromBodyAttribute.Type, BindingSource.Body, false);
             }
 
             var isTyped = !_untypedTriggerParameters.Contains(triggerParameter.ParameterType.FullName);
             if (isTyped)
             {
-                yield return CreateApiParameterDescription(triggerParameter, BindingSource.Body);
+                yield return CreateApiParameterDescription(triggerParameter, BindingSource.Body, false);
             }
         }
 
-        private ApiParameterDescription CreateApiParameterDescription(ParameterInfo parameter, BindingSource bindingSource)
+        private ApiParameterDescription CreateApiParameterDescription(ParameterInfo parameter, BindingSource bindingSource, bool isOptional)
         {
             var name = parameter.Name;
             var type = parameter.ParameterType;
 
-            return CreateApiParameterDescription(name, type, bindingSource);
+            return CreateApiParameterDescription(name, type, bindingSource, isOptional);
         }
 
-        private ApiParameterDescription CreateApiParameterDescription(string name, Type type, BindingSource bindingSource)
+        private ApiParameterDescription CreateApiParameterDescription(string name, Type type, BindingSource bindingSource, bool isOptional)
         {
             var description = new ApiParameterDescription
             {
