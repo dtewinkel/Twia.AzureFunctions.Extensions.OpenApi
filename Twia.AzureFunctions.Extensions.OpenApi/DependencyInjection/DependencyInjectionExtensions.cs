@@ -9,6 +9,8 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.DependencyInjection
 {
     public static class DependencyInjectionExtensions
     {
+        private static Action<SwaggerGenOptions> _setupSwaggerGen;
+
         public static IServiceCollection AddOpenApiService(this IServiceCollection services, Assembly functionAssembly, Action<SwaggerGenOptions> setupSwaggerGen = null)
         {
             EnsureArg.IsNotNull(services, nameof(services));
@@ -21,9 +23,16 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.DependencyInjection
             services.AddSingleton<IApiDescriptionGroupCollectionProvider, FunctionApiDescriptionGroupCollectionProvider>();
             services.AddSingleton<IOpenApiServiceConfigurationStorage>(new OpenApiServiceConfigurationStorage(functionAssembly));
 
-            services.AddSwaggerGen(setupSwaggerGen);
+            _setupSwaggerGen = setupSwaggerGen;
+            services.AddSwaggerGen(InternalSetupSwaggerGen);
 
             return services;
+        }
+
+        private static void InternalSetupSwaggerGen(SwaggerGenOptions swaggerGenOptions)
+        {
+            swaggerGenOptions.OperationFilter<HttpFunctionParameterFilter>();
+            _setupSwaggerGen?.Invoke(swaggerGenOptions);
         }
     }
 }

@@ -99,6 +99,10 @@ namespace Twia.AzureFunctions.Extensions.OpenApi
                 {
                     Name = name,
                     ParameterType = type
+                },
+                RouteInfo = new ApiParameterRouteInfo
+                {
+                    IsOptional = isOptional
                 }
             };
             return description;
