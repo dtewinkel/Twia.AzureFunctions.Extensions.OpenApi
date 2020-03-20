@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
@@ -73,6 +74,10 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests
                 {
                     Name = "body",
                     ParameterType = typeof(RequestType)
+                },
+                RouteInfo = new ApiParameterRouteInfo
+                {
+                    IsOptional = false
                 }
             };
 
@@ -82,6 +87,135 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests
             parameters.Should().HaveCount(1);
             var parameter = parameters.Single();
             parameter.Should().BeEquivalentTo(expectedParameter);
+        }
+
+        [TestMethod]
+        public void GetApiParameterDescriptions_WithPathParameter_ReturnsPathParameter()
+        {
+            var method = GetMethodInfo(nameof(FunctionMethodTestSource.PathParameter));
+            var expectedParameter = new ApiParameterDescription
+            {
+                Name = "param",
+                Type = typeof(string),
+                Source = BindingSource.Path,
+                ParameterDescriptor = new ParameterDescriptor
+                {
+                    Name = "param",
+                    ParameterType = typeof(string)
+                },
+                RouteInfo = new ApiParameterRouteInfo
+                {
+                    IsOptional = false
+                }
+            };
+
+            var parameters = _sut.GetApiParameterDescriptions(method, "/path/{param}");
+
+            parameters.Should().NotBeNull();
+            parameters.Should().HaveCount(1);
+            var parameter = parameters.Single();
+            parameter.Should().BeEquivalentTo(expectedParameter);
+        }
+
+        [TestMethod]
+        public void GetApiParameterDescriptions_WithOptionalPathParameter_ReturnsPathParameter()
+        {
+            var method = GetMethodInfo(nameof(FunctionMethodTestSource.PathParameter));
+            var expectedParameter = new ApiParameterDescription
+            {
+                Name = "param",
+                Type = typeof(string),
+                Source = BindingSource.Path,
+                ParameterDescriptor = new ParameterDescriptor
+                {
+                    Name = "param",
+                    ParameterType = typeof(string)
+                },
+                RouteInfo = new ApiParameterRouteInfo
+                {
+                    IsOptional = true
+                }
+            };
+
+            var parameters = _sut.GetApiParameterDescriptions(method, "/path/{param?}");
+
+            parameters.Should().NotBeNull();
+            parameters.Should().HaveCount(1);
+            var parameter = parameters.Single();
+            parameter.Should().BeEquivalentTo(expectedParameter);
+        }
+
+        [TestMethod]
+        public void GetApiParameterDescriptions_WithTypeForPathParameter_ReturnsPathParameter()
+        {
+            var method = GetMethodInfo(nameof(FunctionMethodTestSource.PathParameter));
+            var expectedParameter = new ApiParameterDescription
+            {
+                Name = "param",
+                Type = typeof(string),
+                Source = BindingSource.Path,
+                ParameterDescriptor = new ParameterDescriptor
+                {
+                    Name = "param",
+                    ParameterType = typeof(string)
+                },
+                RouteInfo = new ApiParameterRouteInfo
+                {
+                    IsOptional = true
+                }
+            };
+
+            var parameters = _sut.GetApiParameterDescriptions(method, "/path/{param:int?}");
+
+            parameters.Should().NotBeNull();
+            parameters.Should().HaveCount(1);
+            var parameter = parameters.Single();
+            parameter.Should().BeEquivalentTo(expectedParameter);
+        }
+
+        [TestMethod]
+        public void GetApiParameterDescriptions_WithMultiplePathParameters_ReturnsPathParameters()
+        {
+            var method = GetMethodInfo(nameof(FunctionMethodTestSource.PathParameters));
+            var expectedParameters = new List<ApiParameterDescription>
+            {
+                new ApiParameterDescription
+                {
+                    Name = "param",
+                    Type = typeof(string),
+                    Source = BindingSource.Path,
+                    ParameterDescriptor = new ParameterDescriptor
+                    {
+                        Name = "param",
+                        ParameterType = typeof(string)
+                    },
+                    RouteInfo = new ApiParameterRouteInfo
+                    {
+                        IsOptional = false
+                    }
+                },
+                new ApiParameterDescription
+                {
+                    Name = "idParam",
+                    Type = typeof(int?),
+                    Source = BindingSource.Path,
+                    ParameterDescriptor = new ParameterDescriptor
+                    {
+                        Name = "idParam",
+                        ParameterType = typeof(int?)
+                    },
+                    RouteInfo = new ApiParameterRouteInfo
+                    {
+                        IsOptional = true
+                    }
+                }
+            };
+
+            var parameters = _sut.GetApiParameterDescriptions(method, "/path/{param}/{idParam:int?}");
+
+            parameters.Should().NotBeNull();
+            parameters.Should().HaveCount(2);
+            parameters.Should().BeEquivalentTo(expectedParameters);
         }
 
         [TestMethod]
@@ -97,6 +231,10 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests
                 {
                     Name = "request",
                     ParameterType = typeof(RequestType)
+                },
+                RouteInfo = new ApiParameterRouteInfo
+                {
+                    IsOptional = false
                 }
             };
 
@@ -126,6 +264,16 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests
             }
 
             public void BodyParameter([HttpTrigger(AuthorizationLevel.Anonymous)] RequestType body)
+            {
+                // Nothing to do here.
+            }
+
+            public void PathParameter([HttpTrigger(AuthorizationLevel.Anonymous)] HttpRequestMessage req, string param)
+            {
+                // Nothing to do here.
+            }
+
+            public void PathParameters([HttpTrigger(AuthorizationLevel.Anonymous)] HttpRequestMessage req, string param, int? idParam)
             {
                 // Nothing to do here.
             }
