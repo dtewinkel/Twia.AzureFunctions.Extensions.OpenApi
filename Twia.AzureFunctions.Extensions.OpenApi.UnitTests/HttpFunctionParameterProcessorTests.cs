@@ -74,10 +74,6 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests
                 {
                     Name = "body",
                     ParameterType = typeof(RequestType)
-                },
-                RouteInfo = new ApiParameterRouteInfo
-                {
-                    IsOptional = false
                 }
             };
 
@@ -231,10 +227,6 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests
                 {
                     Name = "request",
                     ParameterType = typeof(RequestType)
-                },
-                RouteInfo = new ApiParameterRouteInfo
-                {
-                    IsOptional = false
                 }
             };
 

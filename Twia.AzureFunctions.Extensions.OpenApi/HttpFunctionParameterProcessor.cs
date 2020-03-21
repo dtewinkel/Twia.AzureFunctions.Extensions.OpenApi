@@ -69,17 +69,17 @@ namespace Twia.AzureFunctions.Extensions.OpenApi
                 .Cast<OpenApiBodyTypeAttribute>().FirstOrDefault();
             if (fromBodyAttribute != null)
             {
-                yield return CreateApiParameterDescription(triggerParameter.Name, fromBodyAttribute.Type, BindingSource.Body, false);
+                yield return CreateApiParameterDescription(triggerParameter.Name, fromBodyAttribute.Type, BindingSource.Body);
             }
 
             var isTyped = !_untypedTriggerParameters.Contains(triggerParameter.ParameterType.FullName);
             if (isTyped)
             {
-                yield return CreateApiParameterDescription(triggerParameter, BindingSource.Body, false);
+                yield return CreateApiParameterDescription(triggerParameter, BindingSource.Body);
             }
         }
 
-        private ApiParameterDescription CreateApiParameterDescription(ParameterInfo parameter, BindingSource bindingSource, bool isOptional)
+        private ApiParameterDescription CreateApiParameterDescription(ParameterInfo parameter, BindingSource bindingSource, bool? isOptional = null)
         {
             var name = parameter.Name;
             var type = parameter.ParameterType;
@@ -87,7 +87,7 @@ namespace Twia.AzureFunctions.Extensions.OpenApi
             return CreateApiParameterDescription(name, type, bindingSource, isOptional);
         }
 
-        private ApiParameterDescription CreateApiParameterDescription(string name, Type type, BindingSource bindingSource, bool isOptional)
+        private ApiParameterDescription CreateApiParameterDescription(string name, Type type, BindingSource bindingSource, bool? isOptional = null)
         {
             var description = new ApiParameterDescription
             {
@@ -99,12 +99,15 @@ namespace Twia.AzureFunctions.Extensions.OpenApi
                 {
                     Name = name,
                     ParameterType = type
-                },
-                RouteInfo = new ApiParameterRouteInfo
-                {
-                    IsOptional = isOptional
                 }
             };
+            if (isOptional.HasValue)
+            {
+                description.RouteInfo = new ApiParameterRouteInfo
+                {
+                    IsOptional = isOptional.Value
+                };
+            }
             return description;
         }
     }

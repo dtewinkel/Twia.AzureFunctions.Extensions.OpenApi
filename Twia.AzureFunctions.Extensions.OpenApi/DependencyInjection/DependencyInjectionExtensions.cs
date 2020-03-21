@@ -31,7 +31,7 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.DependencyInjection
 
         private static void InternalSetupSwaggerGen(SwaggerGenOptions swaggerGenOptions)
         {
-            swaggerGenOptions.OperationFilter<HttpFunctionParameterFilter>();
+            swaggerGenOptions.OperationFilter<HttpFunctionOptionalParameterFilter>();
             _setupSwaggerGen?.Invoke(swaggerGenOptions);
         }
     }
