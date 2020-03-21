@@ -12,5 +12,8 @@
       vmImage: ubuntu-latest
     steps:
 
-    - task: git-tag-on-release-task@8
-      displayName: Tag Sources
+    - task: GitHubTag@1
+      inputs:
+        githubEndpoint: $(GitHubEndpoint)
+        repositoryName: $(Build.Repository.Name)
+        tag: $(Build.BuildNumber)

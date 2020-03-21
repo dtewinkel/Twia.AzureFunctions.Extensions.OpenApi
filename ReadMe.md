@@ -110,9 +110,9 @@ The body parameter is inferred from the type of the parameter with the `HttpTrig
 
 #### Included path parameters
 
-Path parameters are included if the parameter is in the path and the parameter is a parameter to the function method, with the same name. In the path, for a parameter the type and optionality indicator (`?`) are ignored. 
+Path parameters are included if the parameter is in the path and the parameter is a parameter to the function method, with the same name. In the path, for a parameter the type is ignored. 
 
-For example in the path `/api/persons/{lastname:string}/{firstname}/{id:int?}`, the path parameters `lastname`, `firstname`, and `id` will be detected. Their type will be determined from the type of the function method's parameters, and not from the type hint in the path.
+For example in the path `/api/persons/{lastname:string}/{firstname}/{id:int?}`, the path parameters `lastname`, `firstname`, and `id` will be detected. Their type will be determined from the type of the function method's parameters, and not from the type hint in the path. The parameters `lastname` and `firstname` will be marked as required, while `id` will be marked as optional.
 
 ### Descriptions from XML Comments
 
@@ -122,7 +122,6 @@ The generated documentation can include descriptions for methods, parameters and
 
 The following limitations apply:
 
-- Detection if a parameter is required or not is not implemented yet. This is mainly due to limitations in the framework.
 - Annotations for other types of parameters, such as query or header parameters are not yet supported.
 
 ### Responses

@@ -29,7 +29,6 @@ namespace Twia.AzureFunctions.Extensions.OpenApi
             typeof(IActionResult)
         };
 
-
         private readonly IModelMetadataProvider _modelMetadataProvider;
 
         public HttpFunctionResponseProcessor(
@@ -117,7 +116,6 @@ namespace Twia.AzureFunctions.Extensions.OpenApi
                 };
                 apiResponseType.ModelMetadata = _modelMetadataProvider.GetMetadataForType(responseType);
             }
-
 
             return apiResponseType;
         }
