@@ -4,7 +4,6 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using EnsureThat;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Azure.WebJobs;
@@ -35,23 +34,24 @@ namespace Twia.AzureFunctions.Extensions.OpenApi
             _routePrefix = httpOptions.Value.RoutePrefix;
         }
 
-        public ApiDescriptionGroup ProcessHttpFunction(MethodInfo httpFunctionMethod)
+        public ApiDescriptionGroup ProcessHttpFunction(MethodInfo httpFunction)
         {
-            EnsureArg.IsNotNull(httpFunctionMethod, nameof(httpFunctionMethod));
+            EnsureArg.IsNotNull(httpFunction, nameof(httpFunction));
 
-            var functionName = GetFunctionName(httpFunctionMethod);
-            var httpTriggerAttribute = GetHttpTriggerAttribute(httpFunctionMethod);
+            var functionName = GetFunctionName(httpFunction);
+            var httpTriggerAttribute = GetHttpTriggerAttribute(httpFunction);
             var methods = GetMethods(httpTriggerAttribute);
-            var groupName = GetInformationFromApiExplorerSettingsAttribute(httpFunctionMethod);
+            var groupName = GetInformationFromApiExplorerSettingsAttribute(httpFunction);
             var parameters = _httpFunctionParameterProcessor
-                .GetApiParameterDescriptions(httpFunctionMethod, httpTriggerAttribute.Route)
+                .GetApiParameterDescriptions(httpFunction, httpTriggerAttribute.Route)
                 .ToList();
 
-            var responseTypes = _httpFunctionResponseProcessor.GetResponseTypes(httpFunctionMethod);
+            var responseTypes = _httpFunctionResponseProcessor.GetResponseTypes(httpFunction);
             var apiDescriptions = new List<ApiDescription>();
+            var route = GetRoute(httpTriggerAttribute.Route, functionName);
             foreach (var method in methods)
             {
-                var description = CreateApiDescription(httpFunctionMethod, method, httpTriggerAttribute.Route, functionName, groupName, parameters);
+                var description = CreateApiDescription(httpFunction, method, route, functionName, groupName, parameters);
                 AddResponseTypes(description, responseTypes);
                 apiDescriptions.Add(description);
             }
@@ -77,10 +77,11 @@ namespace Twia.AzureFunctions.Extensions.OpenApi
 
 
 
-        private static IEnumerable<string> GetMethods(HttpTriggerAttribute httpTriggerAttribute)
+        private static IList<string> GetMethods(HttpTriggerAttribute httpTriggerAttribute)
         {
             return (httpTriggerAttribute.Methods ?? _defaultMethods)
-                .Select(m => m.Trim().ToUpperInvariant());
+                .Select(m => m.Trim().ToUpperInvariant())
+                .ToList();
         }
 
         private static string GetFunctionName(MethodInfo httpFunctionMethod)
@@ -97,10 +98,9 @@ namespace Twia.AzureFunctions.Extensions.OpenApi
             }
         }
 
-        private ApiDescription CreateApiDescription(MethodInfo httpFunctionMethod, string method, string rawRoute,
+        private ApiDescription CreateApiDescription(MethodInfo httpFunctionMethod, string method, string route,
             string functionName, string groupName, IList<ApiParameterDescription> parameters)
         {
-            var route = GetRoute(rawRoute, functionName);
             var parameterDescriptors = parameters
                 .Select(apiParameterDescription => apiParameterDescription.ParameterDescriptor)
                 .ToList();

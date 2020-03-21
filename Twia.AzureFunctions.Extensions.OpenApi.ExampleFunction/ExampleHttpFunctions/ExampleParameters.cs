@@ -78,6 +78,22 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.ExampleFunction.ExampleHttpFunc
         /// <summary>
         /// Function implementing an custom type on the trigger as Body parameter.
         /// </summary>
+        /// <param name="req">No body.</param>
+        /// <param name="id">An ID of some sort, as long as it is an integer number.</param>
+        [FunctionName(nameof(ExampleOptionalPathParameter))]
+        public void ExampleOptionalPathParameter(
+            // ReSharper disable once UnusedParameter.Global
+#pragma warning disable IDE0060 // Remove unused parameter
+            [HttpTrigger(AuthorizationLevel.Anonymous, "Patch", Route = "PathParameters/{id?}")] HttpRequestMessage req,
+            int id)
+#pragma warning restore IDE0060 // Remove unused parameter
+        {
+            // We do something useful here :-)
+        }
+
+        /// <summary>
+        /// Function implementing an custom type on the trigger as Body parameter.
+        /// </summary>
         /// <param name="req">A example body type.</param>
         /// <param name="id">An ID of some sort, as long as it is an integer number.</param>
         /// <param name="name">Name of the thing to retrieve.</param>

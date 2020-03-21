@@ -69,7 +69,7 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests
             // ReSharper disable once ObjectCreationAsStatement
             Action action = () => _sut.ProcessHttpFunction(null);
 
-            action.Should().Throw<ArgumentNullException>().And.ParamName.Should().Be("httpFunctionMethod");
+            action.Should().Throw<ArgumentNullException>().And.ParamName.Should().Be("httpFunction");
         }
 
         [TestMethod]

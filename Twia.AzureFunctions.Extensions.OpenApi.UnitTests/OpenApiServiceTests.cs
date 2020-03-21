@@ -26,7 +26,6 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests
 
             action.Should().Throw<ArgumentNullException>().And.ParamName.Should().Be("swaggerProvider");
         }
-
         [TestMethod]
         public void GetOpenApiDocument_WithNullForDocumentName_ThrowsException()
         {
@@ -68,7 +67,7 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests
         }
 
         [TestMethod]
-        public void GetOpenApiDocument_ReturnsCorrectJ()
+        public void GetOpenApiDocument_ReturnsCorrectDocument()
         {
             const string documentName = "myDocumentName";
             var openApiDocument = new OpenApiDocument
@@ -88,29 +87,6 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests
 
             document.Should().BeEquivalentTo(openApiDocument);
         }
-
-        [TestMethod]
-        public void GetOpenApiDocument_ForOpenApi3_ReturnsCorrectJson()
-        {
-            const string documentName = "myDocumentName";
-            var openApiDocument = new OpenApiDocument
-            {
-                Info = new OpenApiInfo
-                {
-                    Description = "Test document 2",
-                    Version = "v2",
-                    Title = "Test 2"
-                }
-            };
-            A.CallTo(() => _swaggerProvider.GetSwagger(documentName, null, null)).Returns(openApiDocument);
-
-            var sut = new OpenApiService(_swaggerProvider);
-
-            var document = sut.GetOpenApiDocument(documentName);
-
-            document.Should().BeEquivalentTo(openApiDocument);
-        }
-
 
         [DataTestMethod]
         [DataRow("https://example.com/", "BasePath", "https://example.com", "/BasePath")]

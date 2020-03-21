@@ -5,6 +5,6 @@ namespace Twia.AzureFunctions.Extensions.OpenApi
 {
     public interface IHttpFunctionProcessor
     {
-        ApiDescriptionGroup ProcessHttpFunction(MethodInfo httpFunctionMethod);
+        ApiDescriptionGroup ProcessHttpFunction(MethodInfo httpFunction);
     }
 }
