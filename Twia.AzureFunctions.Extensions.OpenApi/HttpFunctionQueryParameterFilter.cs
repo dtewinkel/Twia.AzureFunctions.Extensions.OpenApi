@@ -29,7 +29,7 @@ namespace Twia.AzureFunctions.Extensions.OpenApi
             }
         }
 
-        private static List<QueryParameterAttribute> GetQueryParameterAttributes(MethodInfo method, List<string> ignoredQueryParameters)
+        private static IEnumerable<QueryParameterAttribute> GetQueryParameterAttributes(MemberInfo method, ICollection<string> ignoredQueryParameters)
         {
             var queryParameterAttributes = new List<QueryParameterAttribute>();
 
@@ -43,7 +43,7 @@ namespace Twia.AzureFunctions.Extensions.OpenApi
             return queryParameterAttributes;
         }
 
-        private static List<string> GetIgnoredQueryParameters(MethodInfo method)
+        private static List<string> GetIgnoredQueryParameters(MemberInfo method)
         {
             var ignoredQueryParameters = new List<string>();
             ignoredQueryParameters.AddRange(method
