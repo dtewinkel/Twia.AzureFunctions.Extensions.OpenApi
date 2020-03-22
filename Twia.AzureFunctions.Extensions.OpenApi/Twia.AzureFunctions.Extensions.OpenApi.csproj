@@ -27,6 +27,9 @@ This document can easily be used to generate a Json response, or to generate HTM
     <CodeAnalysisRuleSet>Twia.AzureFunctions.Extensions.OpenApi.ruleset</CodeAnalysisRuleSet>
 
     <PackageReleaseNotes>
+2.2.0
+ - Added support for documenting Query and Header parameters.
+
 2.1.0
  - Fixed that path parameters marked as optional were required according to the generated documentation.
 

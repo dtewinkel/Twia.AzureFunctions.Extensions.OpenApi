@@ -114,6 +114,16 @@ Path parameters are included if the parameter is in the path and the parameter i
 
 For example in the path `/api/persons/{lastname:string}/{firstname}/{id:int?}`, the path parameters `lastname`, `firstname`, and `id` will be detected. Their type will be determined from the type of the function method's parameters, and not from the type hint in the path. The parameters `lastname` and `firstname` will be marked as required, while `id` will be marked as optional.
 
+#### Query and header parameters
+
+Documentation for query and Header parameters can be added using the `QueryParameterAttribute` and the `HeaderParameterAttribute`. 
+
+Both can be added at method, class and assembly level. If added at the class level then the documentation will be added to all documented HTTP function methods in that class. 
+If added at the assembly level, then the documentation will be added to all documented HTTP function methods. 
+
+If query or header parameters are defined at method or assembly level, to not add the documentation for that header or query parameter to method, the `IgnoreHeaderParameterAttribute` and `IgnoreQueryParameterAttribute` attributes can be used. 
+These can be used a method and at a class level.
+
 ### Descriptions from XML Comments
 
 The generated documentation can include descriptions for methods, parameters and models from XML comments in on your types. See [Include Descriptions from XML Comments](https://github.com/domaindrivendev/Swashbuckle.AspNetCore#include-descriptions-from-xml-comments) for more information.
