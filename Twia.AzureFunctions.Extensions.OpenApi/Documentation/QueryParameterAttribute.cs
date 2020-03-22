@@ -3,7 +3,7 @@ using EnsureThat;
 
 namespace Twia.AzureFunctions.Extensions.OpenApi.Documentation
 {
-    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class | AttributeTargets.Assembly, Inherited = true, AllowMultiple = true)]
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class | AttributeTargets.Assembly, Inherited = false, AllowMultiple = true)]
     public class QueryParameterAttribute : Attribute
     {
         private Type _type = typeof(string);

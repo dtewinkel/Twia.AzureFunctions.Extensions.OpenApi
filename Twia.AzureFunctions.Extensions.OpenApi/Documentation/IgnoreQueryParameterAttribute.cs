@@ -3,7 +3,7 @@ using EnsureThat;
 
 namespace Twia.AzureFunctions.Extensions.OpenApi.Documentation
 {
-    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class, Inherited = true, AllowMultiple = true)]
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class, Inherited = false, AllowMultiple = true)]
     public class IgnoreQueryParameterAttribute : Attribute
     {
         public IgnoreQueryParameterAttribute(string name)
