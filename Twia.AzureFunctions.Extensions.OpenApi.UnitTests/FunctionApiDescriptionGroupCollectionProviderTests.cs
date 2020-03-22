@@ -25,13 +25,13 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests
         public void TestInitialize()
         {
             var types = _exampleAssembly.GetTypes()
-                .Where(t => !t.GetCustomAttributes(typeof(OpenApiIgnoreAttribute), false).Any());
+                .Where(t => !t.HasAttribute<OpenApiIgnoreAttribute>());
             _expectedMethodNames = types
                 .SelectMany(t => t.GetMethods())
-                .Where(m => m.GetCustomAttributes(typeof(FunctionNameAttribute), false).Any())
-                .Where(m => m.GetParameters().Any(p => p.GetCustomAttributes(typeof(HttpTriggerAttribute), false).Any()))
-                .Where(m => !m.GetCustomAttributes(typeof(OpenApiIgnoreAttribute), false).Any())
-                .Where(m => !m.GetCustomAttributes(typeof(ApiExplorerSettingsAttribute), false).Cast<ApiExplorerSettingsAttribute>().Any(a => a.IgnoreApi))
+                .Where(m => m.HasAttribute<FunctionNameAttribute>())
+                .Where(m => m.GetParameters().Any(p => p.HasAttribute<HttpTriggerAttribute>()))
+                .Where(m => !m.HasAttribute<OpenApiIgnoreAttribute>())
+                .Where(m => !m.GetAttributes<ApiExplorerSettingsAttribute>().Any(a => a.IgnoreApi))
                 .Select(methodInfo => $"{methodInfo.DeclaringType?.FullName ?? ""}.{methodInfo.Name}")
                 .ToArray();
 

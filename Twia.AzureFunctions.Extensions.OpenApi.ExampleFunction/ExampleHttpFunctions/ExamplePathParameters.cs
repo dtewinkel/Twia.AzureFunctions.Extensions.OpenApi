@@ -13,7 +13,7 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.ExampleFunction.ExampleHttpFunc
     /// <summary>
     /// Provides examples for parameters to HTTP functions.
     /// </summary>
-    public class ExampleParameters
+    public class ExamplePathParameters
     {
         /// <summary>
         /// Function implementing just a default HTTP request parameter.
