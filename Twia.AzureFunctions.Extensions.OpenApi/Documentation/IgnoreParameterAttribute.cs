@@ -8,7 +8,7 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.Documentation
     {
         protected IgnoreParameterAttribute(string name)
         {
-            EnsureArg.IsNotNullOrWhiteSpace(name);
+            EnsureArg.IsNotNullOrWhiteSpace(name, nameof(name));
 
             Name = name;
         }
