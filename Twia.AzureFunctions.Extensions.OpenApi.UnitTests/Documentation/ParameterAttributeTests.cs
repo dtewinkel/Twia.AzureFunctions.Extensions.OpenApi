@@ -85,6 +85,17 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests.Documentation
         }
 
         [TestMethod]
+        public void Type_WhenSetToVoid_ThrowsException()
+        {
+            // ReSharper disable once ObjectCreationAsStatement
+            var sut = new ProxyToParameterAttribute(_name);
+
+            Action action = () => sut.Type = typeof(void);
+
+            action.Should().Throw<ArgumentException>().And.ParamName.Should().Be("value");
+        }
+
+        [TestMethod]
         public void Type_WhenSetToInt_ReturnsInt()
         {
             var type = typeof(int);

@@ -10,15 +10,15 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Twia.AzureFunctions.Extensions.OpenApi.Documentation;
 
-[assembly: QueryParameter("assembly-default")]
-[assembly: QueryParameter("assembly-complete", Description = "Description of assembly-complete!", IsRequired = false, Type = typeof(decimal))]
-[assembly: QueryParameter("assembly-to-ignore1")]
-[assembly: QueryParameter("assembly-to-ignore2")]
+[assembly: HeaderParameter("assembly-default")]
+[assembly: HeaderParameter("assembly-complete", Description = "Description of assembly-complete!", IsRequired = false, Type = typeof(decimal))]
+[assembly: HeaderParameter("assembly-to-ignore1")]
+[assembly: HeaderParameter("assembly-to-ignore2")]
 
 namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests
 {
     [TestClass]
-    public class HttpFunctionQueryParameterFilterTests
+    public class HttpFunctionHeaderParameterFilterTests
     {
         private readonly OpenApiParameter[] _expectedApiParameters = new[]
         {
@@ -29,16 +29,16 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests
             NewOpenApiParameter("source1-default"),
             NewOpenApiParameter("source1-complete", true, true, typeof(short)),
             NewOpenApiParameter("source1-to-ignore"),
-            NewOpenApiParameter("source1-default-QueryParameters"),
-            NewOpenApiParameter("source1-complete-QueryParameters", true, true, typeof(int)),
-            NewOpenApiParameter("source1-default-NoIgnoreQueryParameters")
+            NewOpenApiParameter("source1-default-HeaderParameters"),
+            NewOpenApiParameter("source1-complete-HeaderParameters", true, true, typeof(int)),
+            NewOpenApiParameter("source1-default-NoIgnoreHeaderParameters")
         };
 
         private static OpenApiParameter NewOpenApiParameter(string name, bool generateDescription = false, bool setIsRequiredToFalse = false, Type setType = null)
         {
             var openApiParameter = new OpenApiParameter
             {
-                In = ParameterLocation.Query,
+                In = ParameterLocation.Header,
                 Name = name,
                 Schema = new OpenApiSchema
                 {
@@ -77,7 +77,7 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests
         [TestMethod]
         public void Apply_WithNullForOperation_ThrowsException()
         {
-            var sut = new HttpFunctionQueryParameterFilter();
+            var sut = new HttpFunctionHeaderParameterFilter();
             var context = A.Fake<OperationFilterContext>();
 
             Action action = () => sut.Apply(null, context);
@@ -88,7 +88,7 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests
         [TestMethod]
         public void Apply_WithNullForContext_ThrowsException()
         {
-            var sut = new HttpFunctionQueryParameterFilter();
+            var sut = new HttpFunctionHeaderParameterFilter();
 
             Action action = () => sut.Apply(_operation, null);
 
@@ -96,13 +96,13 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests
         }
 
         [TestMethod]
-        public void Apply_ForNoOwnQueryParameters_ReturnsCorrectResult()
+        public void Apply_NoOwnHeaderParameters_ReturnsCorrectResult()
         {
-            var method = GetMethodInfo1(nameof(FunctionMethodTestSource1.NoOwnQueryParameters));
-            var expectedResultIds = _functionMethodTestSource1.NoOwnQueryParameters();
+            var method = GetMethodInfo1(nameof(FunctionMethodTestSource1.NoOwnHeaderParameters));
+            var expectedResultIds = _functionMethodTestSource1.NoOwnHeaderParameters();
             var context = CreateOperationFilterContext(method);
 
-            var sut = new HttpFunctionQueryParameterFilter();
+            var sut = new HttpFunctionHeaderParameterFilter();
 
             sut.Apply(_operation, context);
 
@@ -110,13 +110,13 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests
         }
 
         [TestMethod]
-        public void Apply_ForQueryParameters_ReturnsCorrectResult()
+        public void Apply_ForHeaderParameters_ReturnsCorrectResult()
         {
-            var method = GetMethodInfo1(nameof(FunctionMethodTestSource1.QueryParameters));
-            var expectedResultIds = _functionMethodTestSource1.QueryParameters();
+            var method = GetMethodInfo1(nameof(FunctionMethodTestSource1.HeaderParameters));
+            var expectedResultIds = _functionMethodTestSource1.HeaderParameters();
             var context = CreateOperationFilterContext(method);
 
-            var sut = new HttpFunctionQueryParameterFilter();
+            var sut = new HttpFunctionHeaderParameterFilter();
 
             sut.Apply(_operation, context);
 
@@ -124,13 +124,13 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests
         }
 
         [TestMethod]
-        public void Apply_ForNoIgnoreQueryParameters_ReturnsCorrectResult()
+        public void Apply_ForNoIgnoreHeaderParameters_ReturnsCorrectResult()
         {
-            var method = GetMethodInfo1(nameof(FunctionMethodTestSource1.NoIgnoreQueryParameters));
-            var expectedResultIds = _functionMethodTestSource1.NoIgnoreQueryParameters();
+            var method = GetMethodInfo1(nameof(FunctionMethodTestSource1.NoIgnoreHeaderParameters));
+            var expectedResultIds = _functionMethodTestSource1.NoIgnoreHeaderParameters();
             var context = CreateOperationFilterContext(method);
 
-            var sut = new HttpFunctionQueryParameterFilter();
+            var sut = new HttpFunctionHeaderParameterFilter();
 
             sut.Apply(_operation, context);
 
@@ -157,7 +157,6 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests
 
                 var openApiParameter = _operation.Parameters.SingleOrDefault(param =>
                     param.Name == expected.Name
-                    && param.In == expected.In
                     && param.Required == expected.Required
                     && param.Schema.Type == expected.Schema.Type
                     && param.Description == expected.Description
@@ -172,29 +171,29 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests
             return typeof(FunctionMethodTestSource1).GetMethod(methodName);
         }
 
-        [QueryParameter("source1-default")]
-        [QueryParameter("source1-complete", Description = "Description of source1-complete!", IsRequired = false, Type = typeof(short))]
-        [QueryParameter("source1-to-ignore")]
-        [IgnoreQueryParameter("assembly-to-ignore1")]
+        [HeaderParameter("source1-default")]
+        [HeaderParameter("source1-complete", Description = "Description of source1-complete!", IsRequired = false, Type = typeof(short))]
+        [HeaderParameter("source1-to-ignore")]
+        [IgnoreHeaderParameter("assembly-to-ignore1")]
         private class FunctionMethodTestSource1
         {
-            [IgnoreQueryParameter("source1-to-ignore")]
-            public int[] NoOwnQueryParameters()
+            [IgnoreHeaderParameter("source1-to-ignore")]
+            public int[] NoOwnHeaderParameters()
             {
                 return new[] {0, 1, 3, 4, 5};
             }
 
-            [QueryParameter("source1-default-QueryParameters")]
-            [QueryParameter("source1-complete-QueryParameters", Description = "Description of source1-complete-QueryParameters!", IsRequired = false, Type = typeof(int))]
-            [IgnoreQueryParameter("source1-to-ignore")]
-            [IgnoreQueryParameter("assembly-to-ignore2")]
-            public int[] QueryParameters()
+            [HeaderParameter("source1-default-HeaderParameters")]
+            [HeaderParameter("source1-complete-HeaderParameters", Description = "Description of source1-complete-HeaderParameters!", IsRequired = false, Type = typeof(int))]
+            [IgnoreHeaderParameter("source1-to-ignore")]
+            [IgnoreHeaderParameter("assembly-to-ignore2")]
+            public int[] HeaderParameters()
             {
                 return new[] { 0, 1, 4, 5, 7, 8 };
             }
 
-            [QueryParameter("source1-default-NoIgnoreQueryParameters")]
-            public int[] NoIgnoreQueryParameters()
+            [HeaderParameter("source1-default-NoIgnoreHeaderParameters")]
+            public int[] NoIgnoreHeaderParameters()
             {
                 return new[] { 0, 1, 3, 4, 5, 6, 9 };
             }

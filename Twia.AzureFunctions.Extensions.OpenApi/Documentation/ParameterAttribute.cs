@@ -24,7 +24,7 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.Documentation
             set
             {
                 EnsureArg.IsNotNull(value, nameof(value));
-                EnsureArg.IsNotOfType(Type, typeof(void), nameof(value));
+                EnsureArg.IsNotOfType(value, typeof(void), nameof(value));
 
                 _type = value;
             }
