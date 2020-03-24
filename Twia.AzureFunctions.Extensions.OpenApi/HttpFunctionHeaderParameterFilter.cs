@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using EnsureThat;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Twia.AzureFunctions.Extensions.OpenApi.Documentation;
@@ -11,6 +12,9 @@ namespace Twia.AzureFunctions.Extensions.OpenApi
     {
         public void Apply(OpenApiOperation operation, OperationFilterContext context)
         {
+            EnsureArg.IsNotNull(operation, nameof(operation));
+            EnsureArg.IsNotNull(context, nameof(context));
+
             var method = context.MethodInfo;
             var ignoredHeaderParameters = GetIgnoredHeaderParameters(method);
             var headerParameterAttributes = GetHeaderParameterAttributes(method, ignoredHeaderParameters);
@@ -21,7 +25,7 @@ namespace Twia.AzureFunctions.Extensions.OpenApi
                     {
                         In = ParameterLocation.Header,
                         Name = headerParameterAttribute.Name,
-                        Schema = context.SchemaGenerator.GenerateSchema(headerParameterAttribute.Type, context.SchemaRepository),
+                        Schema = context.SchemaGenerator.GenerateSchema(headerParameterAttribute.Type, context.SchemaRepository, method),
                         Description = headerParameterAttribute.Description,
                         Required = headerParameterAttribute.IsRequired
                     }
