@@ -39,12 +39,12 @@ namespace Twia.AzureFunctions.Extensions.OpenApi
         private IEnumerable<MethodInfo> GetHttpFunctionMethods()
         {
             return _configuration.FunctionAssembly.GetTypes()
-                .Where(t => !t.GetCustomAttributes(typeof(OpenApiIgnoreAttribute), false).Any())
+                .Where(t => !t.HasAttribute<OpenApiIgnoreAttribute>())
                 .SelectMany(t => t.GetMethods())
-                .Where(m => m.GetCustomAttributes(typeof(FunctionNameAttribute), false).Any())
-                .Where(m => m.GetParameters().Any(p => p.GetCustomAttributes(typeof(HttpTriggerAttribute), false).Any()))
-                .Where(m => !m.GetCustomAttributes(typeof(OpenApiIgnoreAttribute), false).Any())
-                .Where(m => !m.GetCustomAttributes(typeof(ApiExplorerSettingsAttribute), false).Cast<ApiExplorerSettingsAttribute>().Any(a => a.IgnoreApi));
+                .Where(m => m.HasAttribute<FunctionNameAttribute>())
+                .Where(m => m.GetParameters().Any(p => p.HasAttribute<HttpTriggerAttribute>()))
+                .Where(m => !m.HasAttribute<OpenApiIgnoreAttribute>())
+                .Where(m => !m.GetAttributes<ApiExplorerSettingsAttribute>().Any(a => a.IgnoreApi));
         }
     }
 }

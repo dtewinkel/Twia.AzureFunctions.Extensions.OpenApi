@@ -62,11 +62,10 @@ namespace Twia.AzureFunctions.Extensions.OpenApi
         {
             var triggerParameter = functionMethod
                 .GetParameters()
-                .First(parameter => parameter.GetCustomAttributes(typeof(HttpTriggerAttribute), false).Any());
+                .First(parameter => parameter.HasAttribute<HttpTriggerAttribute>());
 
             // First try OpenApiBodyTypeAttribute, regardless of the parameter's own type.
-            var fromBodyAttribute = triggerParameter.GetCustomAttributes(typeof(OpenApiBodyTypeAttribute))
-                .Cast<OpenApiBodyTypeAttribute>().FirstOrDefault();
+            var fromBodyAttribute = triggerParameter.GetAttributes<OpenApiBodyTypeAttribute>().FirstOrDefault();
             if (fromBodyAttribute != null)
             {
                 yield return CreateApiParameterDescription(triggerParameter.Name, fromBodyAttribute.Type, BindingSource.Body);

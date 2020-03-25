@@ -44,10 +44,7 @@ namespace Twia.AzureFunctions.Extensions.OpenApi
         {
             EnsureArg.IsNotNull(httpFunctionMethod, nameof(httpFunctionMethod));
 
-            var producesResponseTypeAttributes = httpFunctionMethod
-                .GetCustomAttributes(typeof(ProducesResponseTypeAttribute))
-                .Cast<ProducesResponseTypeAttribute>()
-                .ToList();
+            var producesResponseTypeAttributes = httpFunctionMethod.GetAttributes<ProducesResponseTypeAttribute>();
 
             if (producesResponseTypeAttributes.Any())
             {
@@ -91,7 +88,7 @@ namespace Twia.AzureFunctions.Extensions.OpenApi
             return new List<ApiResponseType> { apiResponseType };
         }
 
-        private IReadOnlyList<ApiResponseType> AddResponseTypesFromAttributes(List<ProducesResponseTypeAttribute> producesResponseTypeAttributes)
+        private IReadOnlyList<ApiResponseType> AddResponseTypesFromAttributes(IList<ProducesResponseTypeAttribute> producesResponseTypeAttributes)
         {
             return producesResponseTypeAttributes
                 .Select(producesResponseTypeAttribute => GetApiResponseType(producesResponseTypeAttribute.Type, producesResponseTypeAttribute.StatusCode))

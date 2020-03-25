@@ -27,6 +27,9 @@ This document can easily be used to generate a Json response, or to generate HTM
     <CodeAnalysisRuleSet>Twia.AzureFunctions.Extensions.OpenApi.ruleset</CodeAnalysisRuleSet>
 
     <PackageReleaseNotes>
+2.2.0
+ - Added support for documenting Query and Header parameters.
+
 2.1.0
  - Fixed that path parameters marked as optional were required according to the generated documentation.
 
@@ -52,7 +55,7 @@ This document can easily be used to generate a Json response, or to generate HTM
     <PackageReference Include="Ensure.That" Version="8.2.0" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="3.0.2" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.1.2" />
-    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="5.1.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="5.2.0" />
   </ItemGroup>
 
   <ItemGroup>

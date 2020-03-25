@@ -61,17 +61,15 @@ namespace Twia.AzureFunctions.Extensions.OpenApi
 
         private static string GetInformationFromApiExplorerSettingsAttribute(MethodInfo httpFunctionMethod)
         {
-            return httpFunctionMethod.GetCustomAttributes(typeof(ApiExplorerSettingsAttribute))
-                .Cast<ApiExplorerSettingsAttribute>().SingleOrDefault()?.GroupName;
+            return httpFunctionMethod.GetAttributes<ApiExplorerSettingsAttribute>().SingleOrDefault()?.GroupName;
         }
 
         private static HttpTriggerAttribute GetHttpTriggerAttribute(MethodInfo httpFunctionMethod)
         {
             return httpFunctionMethod
                 .GetParameters()
-                .Single(p => p.GetCustomAttributes(typeof(HttpTriggerAttribute)).Any())
-                .GetCustomAttributes(typeof(HttpTriggerAttribute))
-                .Cast<HttpTriggerAttribute>()
+                .Single(p => p.HasAttribute<HttpTriggerAttribute>())
+                .GetAttributes<HttpTriggerAttribute>()
                 .Single();
         }
 
@@ -86,8 +84,7 @@ namespace Twia.AzureFunctions.Extensions.OpenApi
 
         private static string GetFunctionName(MethodInfo httpFunctionMethod)
         {
-            return httpFunctionMethod.GetCustomAttributes(typeof(FunctionNameAttribute))
-                .Cast<FunctionNameAttribute>().Single().Name;
+            return httpFunctionMethod.GetAttributes<FunctionNameAttribute>().Single().Name;
         }
 
         private static void AddResponseTypes(ApiDescription description, IReadOnlyList<ApiResponseType> responseTypes)

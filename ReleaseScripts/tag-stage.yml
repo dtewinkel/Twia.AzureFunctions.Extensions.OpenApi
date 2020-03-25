@@ -9,7 +9,7 @@
   - job: tag_build
     displayName: Tag Sources
     pool:
-      vmImage: ubuntu-latest
+      vmImage: windows-latest
     steps:
 
     - task: GitHubTag@1
