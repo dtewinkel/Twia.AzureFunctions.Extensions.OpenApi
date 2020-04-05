@@ -33,6 +33,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestAssembly.Function", "Te
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestAssembly.Client", "TestAssembly.Client\TestAssembly.Client.csproj", "{6C479799-DF18-4DC9-A7B9-42F3DBBFCA79}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Twia.AzureFunctions.Extensions.OpenApi.ExampleV2Function", "Twia.AzureFunctions.Extensions.OpenApi.ExampleV2Function\Twia.AzureFunctions.Extensions.OpenApi.ExampleV2Function.csproj", "{B53103A3-49F5-4221-95B3-683D819688B8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -61,6 +63,10 @@ Global
 		{6C479799-DF18-4DC9-A7B9-42F3DBBFCA79}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6C479799-DF18-4DC9-A7B9-42F3DBBFCA79}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6C479799-DF18-4DC9-A7B9-42F3DBBFCA79}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B53103A3-49F5-4221-95B3-683D819688B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B53103A3-49F5-4221-95B3-683D819688B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B53103A3-49F5-4221-95B3-683D819688B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B53103A3-49F5-4221-95B3-683D819688B8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
