@@ -55,7 +55,7 @@ This document can easily be used to generate a Json response, or to generate HTM
     <PackageReference Include="Ensure.That" Version="8.2.0" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="3.0.2" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="5.2.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="5.3.3" />
   </ItemGroup>
 
   <ItemGroup>
