@@ -7,6 +7,7 @@ using FakeItEasy;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
@@ -70,11 +71,6 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests
                 Name = "body",
                 Type = typeof(RequestType),
                 Source = BindingSource.Body,
-                ParameterDescriptor = new ParameterDescriptor
-                {
-                    Name = "body",
-                    ParameterType = typeof(RequestType)
-                }
             };
 
             var parameters = _sut.GetApiParameterDescriptions(method, null);
@@ -94,14 +90,15 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests
                 Name = "param",
                 Type = typeof(string),
                 Source = BindingSource.Path,
-                ParameterDescriptor = new ParameterDescriptor
-                {
-                    Name = "param",
-                    ParameterType = typeof(string)
-                },
                 RouteInfo = new ApiParameterRouteInfo
                 {
                     IsOptional = false
+                },
+                ParameterDescriptor = new ControllerParameterDescriptor
+                {
+                    Name = "param",
+                    ParameterType = typeof(string),
+                    ParameterInfo = method.GetParameters()[1]
                 }
             };
 
@@ -122,14 +119,15 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests
                 Name = "param",
                 Type = typeof(string),
                 Source = BindingSource.Path,
-                ParameterDescriptor = new ParameterDescriptor
-                {
-                    Name = "param",
-                    ParameterType = typeof(string)
-                },
                 RouteInfo = new ApiParameterRouteInfo
                 {
                     IsOptional = true
+                },
+                ParameterDescriptor = new ControllerParameterDescriptor
+                {
+                    Name = "param",
+                    ParameterType = typeof(string),
+                    ParameterInfo = method.GetParameters()[1]
                 }
             };
 
@@ -150,14 +148,15 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests
                 Name = "param",
                 Type = typeof(string),
                 Source = BindingSource.Path,
-                ParameterDescriptor = new ParameterDescriptor
-                {
-                    Name = "param",
-                    ParameterType = typeof(string)
-                },
                 RouteInfo = new ApiParameterRouteInfo
                 {
                     IsOptional = true
+                },
+                ParameterDescriptor = new ControllerParameterDescriptor
+                {
+                    Name = "param",
+                    ParameterType = typeof(string),
+                    ParameterInfo = method.GetParameters()[1]
                 }
             };
 
@@ -180,29 +179,32 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests
                     Name = "param",
                     Type = typeof(string),
                     Source = BindingSource.Path,
-                    ParameterDescriptor = new ParameterDescriptor
-                    {
-                        Name = "param",
-                        ParameterType = typeof(string)
-                    },
                     RouteInfo = new ApiParameterRouteInfo
                     {
                         IsOptional = false
+                    },
+                    ParameterDescriptor = new ControllerParameterDescriptor
+                    {
+                        Name = "param",
+                        ParameterType = typeof(string),
+                        ParameterInfo = method.GetParameters()[1]
                     }
+
                 },
                 new ApiParameterDescription
                 {
                     Name = "idParam",
                     Type = typeof(int?),
                     Source = BindingSource.Path,
-                    ParameterDescriptor = new ParameterDescriptor
-                    {
-                        Name = "idParam",
-                        ParameterType = typeof(int?)
-                    },
                     RouteInfo = new ApiParameterRouteInfo
                     {
                         IsOptional = true
+                    },
+                    ParameterDescriptor = new ControllerParameterDescriptor
+                    {
+                        Name = "idParam",
+                        ParameterType = typeof(int?),
+                        ParameterInfo = method.GetParameters()[2]
                     }
                 }
             };
@@ -222,12 +224,7 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests
             {
                 Name = "request",
                 Type = typeof(RequestType),
-                Source = BindingSource.Body,
-                ParameterDescriptor = new ParameterDescriptor
-                {
-                    Name = "request",
-                    ParameterType = typeof(RequestType)
-                }
+                Source = BindingSource.Body
             };
 
             var parameters = _sut.GetApiParameterDescriptions(method, null);

@@ -16,20 +16,24 @@ namespace Twia.AzureFunctions.Extensions.OpenApi
             EnsureArg.IsNotNull(context, nameof(context));
 
             var method = context.MethodInfo;
-            var ignoredQueryParameters = GetIgnoredQueryParameters(method);
-            var queryParameterAttributes = GetQueryParameterAttributes(method, ignoredQueryParameters);
-            foreach (var queryParameterAttribute in queryParameterAttributes)
+            if (method != null)
             {
-                operation.Parameters.Add(
-                    new OpenApiParameter
-                    {
-                        In = ParameterLocation.Query,
-                        Name = queryParameterAttribute.Name,
-                        Schema = context.SchemaGenerator.GenerateSchema(queryParameterAttribute.Type, context.SchemaRepository, method),
-                        Description = queryParameterAttribute.Description,
-                        Required = queryParameterAttribute.IsRequired
-                    }
-                );
+                var ignoredQueryParameters = GetIgnoredQueryParameters(method);
+                var queryParameterAttributes = GetQueryParameterAttributes(method, ignoredQueryParameters);
+                foreach (var queryParameterAttribute in queryParameterAttributes)
+                {
+                    operation.Parameters.Add(
+                        new OpenApiParameter
+                        {
+                            In = ParameterLocation.Query,
+                            Name = queryParameterAttribute.Name,
+                            Schema = context.SchemaGenerator.GenerateSchema(queryParameterAttribute.Type,
+                                context.SchemaRepository, method),
+                            Description = queryParameterAttribute.Description,
+                            Required = queryParameterAttribute.IsRequired
+                        }
+                    );
+                }
             }
         }
 

@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using EnsureThat;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Azure.WebJobs;
@@ -96,12 +97,9 @@ namespace Twia.AzureFunctions.Extensions.OpenApi
         }
 
         private ApiDescription CreateApiDescription(MethodInfo httpFunctionMethod, string method, string route,
-            string functionName, string groupName, IList<ApiParameterDescription> parameters)
+            string functionName, string groupName, IEnumerable<ApiParameterDescription> parameters)
         {
-            var parameterDescriptors = parameters
-                .Select(apiParameterDescription => apiParameterDescription.ParameterDescriptor)
-                .ToList();
-
+            var controllerName = httpFunctionMethod.DeclaringType?.Name;
             var description = new ApiDescription
             {
                 HttpMethod = method,
@@ -109,18 +107,18 @@ namespace Twia.AzureFunctions.Extensions.OpenApi
                 GroupName = groupName,
                 ActionDescriptor = new ControllerActionDescriptor
                 {
-                    DisplayName = functionName,
                     MethodInfo = httpFunctionMethod,
-                    ControllerName = method,
+                    ControllerName = controllerName,
+                    ActionName = functionName,
+                    DisplayName = functionName,
                     ControllerTypeInfo = httpFunctionMethod.DeclaringType.GetTypeInfo(),
-                    Parameters = parameterDescriptors,
+                    Parameters = new List<ParameterDescriptor>(),
                     RouteValues = new Dictionary<string, string>
                     {
-                        {"controller", functionName},
-                        {"action", method}
-                    },
-                    ActionName = functionName
-                },
+                        {"controller", controllerName },
+                        {"Action", functionName }
+                    }
+                }
             };
 
             foreach (var format in _defaultFormats)

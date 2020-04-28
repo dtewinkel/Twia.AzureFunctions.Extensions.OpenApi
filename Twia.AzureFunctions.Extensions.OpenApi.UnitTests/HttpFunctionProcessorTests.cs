@@ -233,8 +233,7 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests
 
             var apiDescription = apiDescriptionGroup.Items.Single();
             apiDescription.ParameterDescriptions.Should().BeEquivalentTo(expectedParameterDescriptions);
-            apiDescription.ActionDescriptor.Parameters.Should()
-                .BeEquivalentTo(expectedParameterDescriptions.Select(desc => desc.ParameterDescriptor));
+            apiDescription.ActionDescriptor.Parameters.Should().BeEmpty();
         }
 
 
