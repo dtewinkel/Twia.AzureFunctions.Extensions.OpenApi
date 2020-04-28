@@ -317,7 +317,9 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests
             public void MetadataTestRouteWithPlaceholders(
                 [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "Route/{name}/{date?}/{id:int}/{anotherId:int?}/")] HttpRequest req,
                 string name,
-                string date)
+                string date,
+                int id,
+                int? anotherId)
             {
                 // Nothing to do here.
             }

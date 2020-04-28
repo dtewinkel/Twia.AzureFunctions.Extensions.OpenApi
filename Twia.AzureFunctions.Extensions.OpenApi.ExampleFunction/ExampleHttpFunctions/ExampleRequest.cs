@@ -30,5 +30,11 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.ExampleFunction.ExampleHttpFunc
         [MinLength(1)]
         [MaxLength(100)]
         public string Name { get; set; }
+
+        /// <summary>
+        /// Number of things.
+        /// </summary>
+        [Range(1, 100)]
+        public int? Count { get; set; } 
     }
 }

@@ -69,7 +69,7 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.ExampleFunction
             string documentName)
 #pragma warning restore IDE0060 // Remove unused parameter
         {
-            var document = _openApiService.GetOpenApiDocument("v1");
+            var document = _openApiService.GetOpenApiDocument(documentName ?? "v1");
             var documentJson = document.SerializeAsJson(OpenApiSpecVersion.OpenApi2_0);
 
             return new HttpResponseMessage
