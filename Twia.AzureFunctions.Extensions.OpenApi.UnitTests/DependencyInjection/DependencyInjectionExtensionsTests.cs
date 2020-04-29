@@ -64,9 +64,9 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests.DependencyInjection
 
             var serviceProvider = BuildServiceProvider(options => { isExecuted = true;});
 
-            var configurationStorage = serviceProvider.GetService(typeof(IOpenApiService));
+            var openApiService = serviceProvider.GetService(typeof(IOpenApiService));
 
-            configurationStorage.Should().NotBeNull();
+            openApiService.Should().NotBeNull();
             isExecuted.Should().BeTrue();
         }
 

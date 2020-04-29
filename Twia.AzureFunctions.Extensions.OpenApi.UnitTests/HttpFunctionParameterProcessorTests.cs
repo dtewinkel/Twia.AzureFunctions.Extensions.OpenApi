@@ -5,7 +5,6 @@ using System.Net.Http;
 using System.Reflection;
 using FakeItEasy;
 using FluentAssertions;
-using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
