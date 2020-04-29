@@ -79,7 +79,7 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.ExampleFunction.ExampleHttpFunc
         /// Function implementing an custom type on the trigger as Body parameter.
         /// </summary>
         /// <param name="req">No body.</param>
-        /// <param name="id">An ID of some sort, as long as it is an integer number.</param>
+        /// <param name="id" example="1">An ID of some sort, as long as it is an integer number.</param>
         [FunctionName(nameof(ExampleOptionalPathParameter))]
         public void ExampleOptionalPathParameter(
             // ReSharper disable once UnusedParameter.Global
@@ -95,7 +95,7 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.ExampleFunction.ExampleHttpFunc
         /// Function implementing an custom type on the trigger as Body parameter.
         /// </summary>
         /// <param name="req">A example body type.</param>
-        /// <param name="id">An ID of some sort, as long as it is an integer number.</param>
+        /// <param name="id" example="1">An ID of some sort, as long as it is an integer number.</param>
         /// <param name="name">Name of the thing to retrieve.</param>
         /// <returns>An IActionResult.</returns>
         [FunctionName(nameof(ExampleMultiplePathParameter))]
