@@ -27,25 +27,26 @@ This document can easily be used to generate a Json response, or to generate HTM
     <CodeAnalysisRuleSet>Twia.AzureFunctions.Extensions.OpenApi.ruleset</CodeAnalysisRuleSet>
 
     <PackageReleaseNotes>
-2.2.0
- - Added support for documenting Query and Header parameters.
+2.3.1
 
-2.1.0
- - Fixed that path parameters marked as optional were required according to the generated documentation.
-
-2.0.1
-- Moved project source code to GitHub.
-- Fixed license in NuGet package.
-
-2.0.0
-- [Breaking] Renamed types from *Swagger* to *OpenAPi* to provide consistency.
-- Allow OpenApiIgnoreAttribute on class level to completely ignore a class with Azure Function methods.
-- Allow to set Body parameter type through OpenApiBodyTypeAttribute.
+- Added the missing release notes to the NuGet package.
 - Improved documentation.
 
-1.0.0 - Initial Minimal Viable Release.
-- Support for Response types.
-- Support for Body and Path parameter definitions.
+2.3.0
+
+- Make it work with Azure Functions v2.
+- Fix: Make description for Path parameters work.
+- Set correct type for path parameters.
+
+2.2.0
+
+- Added support for documenting Query and Header parameters.
+
+2.1.0
+
+- Fixed that path parameters marked as optional were required according to the generated documentation.
+
+For a complete list of releases see https://github.com/dtewinkel/Twia.AzureFunctions.Extensions.OpenApi#release-notes.
 </PackageReleaseNotes>
 
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>

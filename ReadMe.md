@@ -8,7 +8,15 @@ The generated document can be converted into a JSON document according to the th
 
 This extension adds logic on top of [Swashbuckle.AspNetCore](https://github.com/domaindrivendev/Swashbuckle.AspNetCore) to detect Azure Function HTTP triggers and extract the information for the parameters and the responses.
 
+## Contents
+
+- [Basic Usage](#basic-usage)
+- [Extracted information from Azure Functions](#extracted-information-from-azure-functions)
+- [Release notes](#release-notes)
+
 ## Basic usage
+
+This NuGet package can be found on [NuGet.org](https://www.nuget.og) has the ID [`Twia.AzureFunctions.Extensions.OpenApi`](https://www.nuget.org/packages/Twia.AzureFunctions.Extensions.OpenApi/).
 
 This package provides an extension method `AddOpenApiService` to register the required dependencies in an `ServiceCollection` and use it through the Microsoft Dependency Injection, for instance using the [Microsoft.Azure.Functions.Extensions.DependencyInjection](https://docs.microsoft.com/bs-cyrl-ba/azure/azure-functions/functions-dotnet-dependency-injection) NuGet package:
 
@@ -53,7 +61,7 @@ namespace MyNamespace
 
 ```
 
-To return a JSON serialized ApenAPI document, create an Azure Function that look similar to:
+To return a JSON serialized OpenAPI document, create an Azure Function that look similar to:
 
 ```csharp
         [FunctionName(nameof(GetOpenApiJson))]
@@ -66,6 +74,39 @@ To return a JSON serialized ApenAPI document, create an Azure Function that look
             {
                 Content = new StringContent(documentJson, Encoding.UTF8, "application/json")
             };
+        }
+```
+
+An example of an Azure function with documentation can look like:
+
+```csharp
+        /// <summary>
+        /// An example function doing great things!
+        /// </summary>
+        /// <remarks>
+        /// An example function doing great things by taking the **ExampleRequest** from the body and handle it by the provided ID!
+        /// </remarks>
+        /// <param name="req">The request type in the body.</param>
+        /// <param name="name">The name of the record.</param>
+        /// <param name="id">The optional ID of the record.</param>
+        /// <response code="200">All is OK. Returns an **ExampleResponse** object.</response>
+        /// <response code="500">Something went horribly wrong.</response>
+        /// <response code="404">The record was not found by its name.</response>
+        [ProducesResponseType(typeof(ExampleResponse), 200)]
+        [ProducesResponseType(500)]
+        [ProducesResponseType(404)]
+        [HeaderParameter("api-key", Type = typeof(string), IsRequired = true, Description = "API Key to access this functionality")]
+        [QueryParameter("strict", Type = typeof(bool), IsRequired = false, Description = "Set to true to do a strict check. Defaults to false.")]
+        [FunctionName(nameof(SomeGreatFunction))]
+        public IActionResult SomeGreatFunction(
+            [OpenApiBodyType(typeof(ExampleRequest))]
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "great/{name}/{id:int?}")]
+            HttpRequestMessage req,
+            string name,
+            int? id)
+        {
+            // Do great stuff here.
+            return new OkObjectResult(new ExampleResponse());
         }
 ```
 
@@ -82,10 +123,6 @@ var openApiV2Json = document.SerializeAsJson(OpenApiSpecVersion.OpenApi2_0);
 var openApiV3Json = document.SerializeAsJson(OpenApiSpecVersion.OpenApi3_0);
 var openApiV3yaml = document.SerializeAsYaml(OpenApiSpecVersion.OpenApi3_0);
 ```
-
-## Generate HTML page
-
- 
 
 ## Extracted information from Azure Functions
 
@@ -146,3 +183,41 @@ If no `ProducesResponseTypeAttribute` is present on a method, then the following
 - If the return type is any of `HttpResponseMessage` or `IActionResult`, then a response of type `object` is added with a status code of `200` (OK). 
   For these return types it is strongly advised to use the `ProducesResponseTypeAttribute` to define the expected result types.
 - In all other cases a response type of the return type is added with status code `200` (OK).
+
+## Release notes
+
+The following version have been released:
+
+### 2.3.1
+
+- Added the missing release notes to the NuGet package.
+
+### 2.3.0
+
+- Make it work with Azure Functions v2.
+- Fix: Make description for Path parameters work.
+- Set correct type for path parameters.
+
+### 2.2.0
+
+- Added support for documenting Query and Header parameters.
+
+### 2.1.0
+
+- Fixed that path parameters marked as optional were required according to the generated documentation.
+
+### 2.0.1
+
+- Moved project source code to GitHub.
+- Fixed license in NuGet package.
+
+### 2.0.0
+
+- [Breaking] Renamed types from *Swagger* to *OpenAPi* to provide consistency.
+- Allow OpenApiIgnoreAttribute on class level to completely ignore a class with Azure Function methods.
+- Allow to set Body parameter type through OpenApiBodyTypeAttribute.
+- Improved documentation.
+
+### 1.0.0 - Initial Minimal Viable Release.
+- Support for Response types.
+- Support for Body and Path parameter definitions.
