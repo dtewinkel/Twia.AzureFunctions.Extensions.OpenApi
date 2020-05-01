@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
 using FakeItEasy;
 using FluentAssertions;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -218,6 +222,73 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests
             apiResponseType.Type.Should().Be(typeof(void));
             apiResponseType.IsDefaultResponse.Should().BeFalse();
             apiResponseType.ModelMetadata.Should().BeNull();
+        }
+        /// <summary>
+        /// This class contains methods that can be process by various units in unit tests.
+        /// </summary>
+        private class ReturnValueTestMethods
+        {
+            [ProducesResponseType(typeof(ResponseType), 200)]
+            public IActionResult AnnotatedSingleAttribute()
+            {
+                return new OkObjectResult(new ResponseType());
+            }
+
+            [ProducesResponseType(typeof(ResponseType), 200)]
+            [ProducesResponseType(typeof(void), 204)]
+            public IActionResult AnnotatedMultipleAttributes()
+            {
+                return new OkObjectResult(new ResponseType());
+            }
+
+            public IActionResult PlainIActionResult()
+            {
+                return new OkResult();
+            }
+
+            public ResponseType PlainResponseType()
+            {
+                return new ResponseType();
+            }
+
+            public IEnumerable<ResponseType> PlainResponseTypeCollection()
+            {
+                return new List<ResponseType> { new ResponseType() };
+            }
+
+            public HttpResponseMessage PlainHttpResponseMessage()
+            {
+                return new HttpResponseMessage(HttpStatusCode.OK);
+            }
+
+            public void PlainVoid()
+            {
+                // Nothing to do here.
+            }
+
+            public Task<IActionResult> PlainTaskOfIActionResult()
+            {
+                return Task.FromResult((IActionResult)new OkResult());
+            }
+
+            public Task<ResponseType> PlainTaskOfResponseType()
+            {
+                return Task.FromResult(new ResponseType());
+            }
+
+            public Task<HttpResponseMessage> PlainTaskOfHttpResponseMessage()
+            {
+                return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK));
+            }
+
+            public Task PlainTaskResult()
+            {
+                return Task.CompletedTask;
+            }
+        }
+
+        private class ResponseType
+        {
         }
     }
 }

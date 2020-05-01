@@ -42,7 +42,7 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests
                 Name = name,
                 Schema = new OpenApiSchema
                 {
-                    Type = setType?.Name ?? typeof(string).Name
+                    Type = setType?.Name ?? nameof(String)
                 },
                 Required = !setIsRequiredToFalse
             };
@@ -58,7 +58,7 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests
         }
 
         private OpenApiOperation _operation;
-        private FunctionMethodTestSource1 _functionMethodTestSource1;
+        private FunctionMethodTestSource _functionMethodTestSource;
         private ISchemaGenerator _schemaRegistry;
         private SchemaRepository _schemaRepository;
 
@@ -69,7 +69,7 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests
             {
                 Parameters = new List<OpenApiParameter>()
             };
-            _functionMethodTestSource1 = new FunctionMethodTestSource1();
+            _functionMethodTestSource = new FunctionMethodTestSource();
             _schemaRegistry = A.Fake<ISchemaGenerator>();
             _schemaRepository = new SchemaRepository();
         }
@@ -98,8 +98,8 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests
         [TestMethod]
         public void Apply_NoOwnHeaderParameters_ReturnsCorrectResult()
         {
-            var method = GetMethodInfo1(nameof(FunctionMethodTestSource1.NoOwnHeaderParameters));
-            var expectedResultIds = _functionMethodTestSource1.NoOwnHeaderParameters();
+            var method = GetMethodInfo(nameof(FunctionMethodTestSource.NoOwnHeaderParameters));
+            var expectedResultIds = _functionMethodTestSource.NoOwnHeaderParameters();
             var context = CreateOperationFilterContext(method);
 
             var sut = new HttpFunctionHeaderParameterFilter();
@@ -112,8 +112,8 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests
         [TestMethod]
         public void Apply_ForHeaderParameters_ReturnsCorrectResult()
         {
-            var method = GetMethodInfo1(nameof(FunctionMethodTestSource1.HeaderParameters));
-            var expectedResultIds = _functionMethodTestSource1.HeaderParameters();
+            var method = GetMethodInfo(nameof(FunctionMethodTestSource.HeaderParameters));
+            var expectedResultIds = _functionMethodTestSource.HeaderParameters();
             var context = CreateOperationFilterContext(method);
 
             var sut = new HttpFunctionHeaderParameterFilter();
@@ -126,8 +126,8 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests
         [TestMethod]
         public void Apply_ForNoIgnoreHeaderParameters_ReturnsCorrectResult()
         {
-            var method = GetMethodInfo1(nameof(FunctionMethodTestSource1.NoIgnoreHeaderParameters));
-            var expectedResultIds = _functionMethodTestSource1.NoIgnoreHeaderParameters();
+            var method = GetMethodInfo(nameof(FunctionMethodTestSource.NoIgnoreHeaderParameters));
+            var expectedResultIds = _functionMethodTestSource.NoIgnoreHeaderParameters();
             var context = CreateOperationFilterContext(method);
 
             var sut = new HttpFunctionHeaderParameterFilter();
@@ -166,16 +166,16 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests
             }
         }
 
-        private static MethodInfo GetMethodInfo1(string methodName)
+        private static MethodInfo GetMethodInfo(string methodName)
         {
-            return typeof(FunctionMethodTestSource1).GetMethod(methodName);
+            return typeof(FunctionMethodTestSource).GetMethod(methodName);
         }
 
         [HeaderParameter("source1-default")]
         [HeaderParameter("source1-complete", Description = "Description of source1-complete!", IsRequired = false, Type = typeof(short))]
         [HeaderParameter("source1-to-ignore")]
         [IgnoreHeaderParameter("assembly-to-ignore1")]
-        private class FunctionMethodTestSource1
+        private class FunctionMethodTestSource
         {
             [IgnoreHeaderParameter("source1-to-ignore")]
             public int[] NoOwnHeaderParameters()

@@ -59,7 +59,7 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests
                         Required = true,
                     }))
             };
-            var method = typeof(FunctionMethodTestSource).GetMethod(nameof(FunctionMethodTestSource.WithParameters));
+            var method = FunctionMethodTestSource.GetMethodInfo();
             _schemaRegistry = A.Fake<ISchemaGenerator>();
             _schemaRepository = new SchemaRepository();
             var apiDescription = new ApiDescription();
@@ -111,14 +111,6 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests
                     .Should()
                     .NotBeNull($"an OpenAPiParameter with name {expectedParameter.Name} was not found matching all the requirements");
                 openApiParameter.Required.Should().Be(!expectedParameter.IsOptional);
-            }
-        }
-
-        private static class FunctionMethodTestSource
-        {
-            public static void WithParameters(string stringParam, int? integerParam, bool booleanParam)
-            {
-                // Just for testing.
             }
         }
     }
