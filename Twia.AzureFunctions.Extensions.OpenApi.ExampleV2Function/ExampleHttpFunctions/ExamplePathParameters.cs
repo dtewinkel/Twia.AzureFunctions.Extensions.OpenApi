@@ -8,7 +8,7 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using Twia.AzureFunctions.Extensions.OpenApi.Documentation;
 
-namespace Twia.AzureFunctions.Extensions.OpenApi.ExampleFunction.ExampleHttpFunctions
+namespace Twia.AzureFunctions.Extensions.OpenApi.ExampleV2Function.ExampleHttpFunctions
 {
     /// <summary>
     /// Provides examples for parameters to HTTP functions.
@@ -30,7 +30,7 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.ExampleFunction.ExampleHttpFunc
         }
 
         /// <summary>
-        /// Function implementing an custom type on the trigger as Body parameter through an attribute.
+        /// Function implementing just a default HTTP request parameter.
         /// </summary>
         /// <param name="req">The request type in the body.</param>
         [FunctionName(nameof(ExampleRequestBodyParameterThroughAttribute))]
@@ -60,7 +60,7 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.ExampleFunction.ExampleHttpFunc
         }
 
         /// <summary>
-        /// Function implementing HttpRequestMessage on the trigger, so no Body parameter.
+        /// Function implementing an custom type on the trigger as Body parameter.
         /// </summary>
         /// <param name="req">No body.</param>
         /// <param name="id">An ID of some sort, as long as it is an integer number.</param>
@@ -92,14 +92,19 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.ExampleFunction.ExampleHttpFunc
         }
 
         /// <summary>
-        /// Function implementing an custom type on the trigger as Body parameter.
+        /// Function implementing multiple path parameters.
         /// </summary>
         /// <param name="req">A example body type.</param>
-        /// <param name="id">An ID of some sort, as long as it is an integer number.</param>
-        /// <param name="name">Name of the thing to retrieve.</param>
-        /// <returns>An IActionResult.</returns>
+        /// <param name="id" example="1">An ID of some sort, as long as it is an integer number.</param>
+        /// <param name="name" example="jonh doe">Name of the thing to retrieve.</param>
+        /// <returns example="123">A nice text.</returns>
+        /// <remarks>
+        /// Some remarks about this thing of beauty....
+        /// </remarks>
+        /// <seealso cref="ExampleBodyAndPathParameter"/>
+        /// <response code="200">Success!!</response>
         [FunctionName(nameof(ExampleMultiplePathParameter))]
-        public void ExampleMultiplePathParameter(
+        public string ExampleMultiplePathParameter(
             // ReSharper disable once UnusedParameter.Global
 #pragma warning disable IDE0060 // Remove unused parameter
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "PathParameters/{name}/{id}")] HttpRequestMessage req,
@@ -107,11 +112,11 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.ExampleFunction.ExampleHttpFunc
             string name)
 #pragma warning restore IDE0060 // Remove unused parameter
         {
-            // We do something useful here :-)
+            return "Done!";
         }
 
         /// <summary>
-        /// Function implementing an custom type on the trigger as Body parameter.
+        /// Function implementing a body and a path parameter.
         /// </summary>
         /// <param name="req">The data in the body that the id is referencing to.</param>
         /// <param name="id">An ID of some sort, as long as it is an integer number.</param>

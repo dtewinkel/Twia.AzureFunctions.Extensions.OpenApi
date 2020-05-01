@@ -233,8 +233,7 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests
 
             var apiDescription = apiDescriptionGroup.Items.Single();
             apiDescription.ParameterDescriptions.Should().BeEquivalentTo(expectedParameterDescriptions);
-            apiDescription.ActionDescriptor.Parameters.Should()
-                .BeEquivalentTo(expectedParameterDescriptions.Select(desc => desc.ParameterDescriptor));
+            apiDescription.ActionDescriptor.Parameters.Should().BeEmpty();
         }
 
 
@@ -317,7 +316,9 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests
             public void MetadataTestRouteWithPlaceholders(
                 [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "Route/{name}/{date?}/{id:int}/{anotherId:int?}/")] HttpRequest req,
                 string name,
-                string date)
+                string date,
+                int id,
+                int? anotherId)
             {
                 // Nothing to do here.
             }

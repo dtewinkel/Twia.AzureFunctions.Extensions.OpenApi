@@ -42,7 +42,7 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.UnitTests
                 Name = name,
                 Schema = new OpenApiSchema
                 {
-                    Type = setType?.Name ?? typeof(string).Name
+                    Type = setType?.Name ?? nameof(String)
                 },
                 Required = !setIsRequiredToFalse
             };

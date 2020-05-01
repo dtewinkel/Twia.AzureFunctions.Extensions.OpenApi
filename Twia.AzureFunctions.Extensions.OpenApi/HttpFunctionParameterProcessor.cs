@@ -6,8 +6,8 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using EnsureThat;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Azure.WebJobs;
 using Twia.AzureFunctions.Extensions.OpenApi.Documentation;
@@ -55,7 +55,8 @@ namespace Twia.AzureFunctions.Extensions.OpenApi
         {
             return functionMethod.GetParameters()
                 .Where(parameterInfo => Regex.IsMatch(route, $"\\{{{parameterInfo.Name}(:[^?}}]*)?\\??\\}}"))
-                .Select(parameterInfo => CreateApiParameterDescription(parameterInfo, BindingSource.Path, Regex.IsMatch(route, $"\\{{{parameterInfo.Name}(:[^?}}]*)?\\?\\}}")));
+                .Select(parameterInfo => CreatePathParameterDescription(parameterInfo,
+                    Regex.IsMatch(route, $"\\{{{parameterInfo.Name}(:[^?}}]*)?\\?\\}}")));
         }
 
         private IEnumerable<ApiParameterDescription> GetBodyParameters(MethodInfo functionMethod)
@@ -68,46 +69,44 @@ namespace Twia.AzureFunctions.Extensions.OpenApi
             var fromBodyAttribute = triggerParameter.GetAttributes<OpenApiBodyTypeAttribute>().FirstOrDefault();
             if (fromBodyAttribute != null)
             {
-                yield return CreateApiParameterDescription(triggerParameter.Name, fromBodyAttribute.Type, BindingSource.Body);
+                yield return CreateBodyParameterDescription(triggerParameter.Name, fromBodyAttribute.Type);
             }
 
             var isTyped = !_untypedTriggerParameters.Contains(triggerParameter.ParameterType.FullName);
             if (isTyped)
             {
-                yield return CreateApiParameterDescription(triggerParameter, BindingSource.Body);
+                yield return CreateBodyParameterDescription(triggerParameter.Name, triggerParameter.ParameterType);
             }
         }
 
-        private ApiParameterDescription CreateApiParameterDescription(ParameterInfo parameter, BindingSource bindingSource, bool? isOptional = null)
+        private ApiParameterDescription CreatePathParameterDescription(ParameterInfo parameter, bool isOptional)
         {
-            var name = parameter.Name;
-            var type = parameter.ParameterType;
-
-            return CreateApiParameterDescription(name, type, bindingSource, isOptional);
+            return new ApiParameterDescription
+            {
+                Name = parameter.Name,
+                Type = parameter.ParameterType,
+                Source = BindingSource.Path,
+                RouteInfo = new ApiParameterRouteInfo
+                {
+                    IsOptional = isOptional
+                },
+                ParameterDescriptor = new ControllerParameterDescriptor
+                {
+                    ParameterType = parameter.ParameterType,
+                    Name = parameter.Name,
+                    ParameterInfo = parameter
+                }
+            };
         }
-
-        private ApiParameterDescription CreateApiParameterDescription(string name, Type type, BindingSource bindingSource, bool? isOptional = null)
+        private ApiParameterDescription CreateBodyParameterDescription(string name, Type type)
         {
-            var description = new ApiParameterDescription
+            return new ApiParameterDescription
             {
                 Name = name,
                 Type = type,
-                Source = bindingSource,
-                ModelMetadata = _modelMetadataProvider.GetMetadataForType(type),
-                ParameterDescriptor = new ParameterDescriptor
-                {
-                    Name = name,
-                    ParameterType = type
-                }
+                Source = BindingSource.Body,
+                ModelMetadata = _modelMetadataProvider.GetMetadataForType(type)
             };
-            if (isOptional.HasValue)
-            {
-                description.RouteInfo = new ApiParameterRouteInfo
-                {
-                    IsOptional = isOptional.Value
-                };
-            }
-            return description;
         }
     }
 }

@@ -34,6 +34,7 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.DependencyInjection
             swaggerGenOptions.OperationFilter<HttpFunctionOptionalParameterFilter>();
             swaggerGenOptions.OperationFilter<HttpFunctionQueryParameterFilter>();
             swaggerGenOptions.OperationFilter<HttpFunctionHeaderParameterFilter>();
+            swaggerGenOptions.OperationFilter<HttpFunctionPathParameterTypeFilter>();
             _setupSwaggerGen?.Invoke(swaggerGenOptions);
         }
     }

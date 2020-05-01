@@ -6,19 +6,16 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 
-namespace Twia.AzureFunctions.Extensions.OpenApi.ExampleFunction.ExampleHttpFunctions
+namespace Twia.AzureFunctions.Extensions.OpenApi.ExampleV2Function.ExampleHttpFunctions
 {
     /// <summary>
-    /// Provides examples for asynchronous HTTP functions.
+    /// Provides examples for simple synchronous HTTP functions.
     /// </summary>
     public class ExampleAsyncReturnTypes
     {
         /// <summary>
-        /// Async function returning an Task.
+        /// Async function implementing the GET method and returning an Task&lt;ExampleResponse&gt;.
         /// </summary>
-        /// <remarks>
-        /// Status code will be 204 (200 for v1 functions). 
-        /// </remarks>
         /// <param name="req"></param>
         [FunctionName(nameof(GetTaskReturnValue))]
         public Task GetTaskReturnValue(
@@ -31,11 +28,10 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.ExampleFunction.ExampleHttpFunc
         }
 
         /// <summary>
-        /// Async function returning an Task&lt;ExampleResponse&gt;.
+        /// Async function implementing the GET method and returning an Task&lt;ExampleResponse&gt;.
         /// </summary>
         /// <param name="req"></param>
         /// <returns>An Task&lt;ExampleResponse&gt;.</returns>
-        /// <remarks>Status code will be 200 and the returned ty will be ExampleResponse.</remarks>
         [FunctionName(nameof(GetTaskOfExampleResponseReturnValue))]
         public Task<ExampleResponse> GetTaskOfExampleResponseReturnValue(
             // ReSharper disable once UnusedParameter.Global
@@ -47,13 +43,8 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.ExampleFunction.ExampleHttpFunc
         }
 
         /// <summary>
-        /// Async function implementing the GET method and returning an Task&lt;IActionResult&gt;.
+        /// Async function implementing the GET method and returning an Task&lt;ExampleResponse&gt;.
         /// </summary>
-        /// <remarks>
-        /// Status code will be 200 and return type will be object.
-        ///
-        /// It is advised to annotate the return type with the `ProducesResponseTypeAttribute`.
-        /// </remarks>
         /// <param name="req"></param>
         /// <returns>An Task&lt;ExampleResponse&gt;.</returns>
         [FunctionName(nameof(GetTaskOfIActionResultReturnValue))]
@@ -67,15 +58,10 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.ExampleFunction.ExampleHttpFunc
         }
 
         /// <summary>
-        /// Function returning an Task&lt;HttpResponseMessage&gt;.
+        /// Function implementing the GET method and returning an Task&lt;T&gt;.
         /// </summary>
         /// <param name="req"></param>
         /// <returns>An HttpResponseMessage.</returns>
-        /// <remarks>
-        /// Status code will be 200 and return type will be object.
-        ///
-        /// It is advised to annotate the return type with the `ProducesResponseTypeAttribute`.
-        /// </remarks>
         [FunctionName(nameof(GetTaskOfHttpResponseMessageReturnValue))]
         public Task<HttpResponseMessage> GetTaskOfHttpResponseMessageReturnValue(
             // ReSharper disable once UnusedParameter.Global

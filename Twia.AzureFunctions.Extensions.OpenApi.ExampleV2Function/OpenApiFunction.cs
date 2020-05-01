@@ -11,7 +11,7 @@ using Microsoft.OpenApi.Extensions;
 using Microsoft.OpenApi.Models;
 using Twia.AzureFunctions.Extensions.OpenApi.Documentation;
 
-namespace Twia.AzureFunctions.Extensions.OpenApi.ExampleFunction
+namespace Twia.AzureFunctions.Extensions.OpenApi.ExampleV2Function
 {
     /// <summary>
     /// Functions to get Swagger or Open API documentation.
@@ -105,13 +105,16 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.ExampleFunction
         {
             var assembly = Assembly.GetExecutingAssembly();
 
-            var stream = assembly.GetManifestResourceStream($"Twia.AzureFunctions.Extensions.OpenApi.ExampleFunction.{resourceName}");
+            var stream = assembly.GetManifestResourceStream($"Twia.AzureFunctions.Extensions.OpenApi.ExampleV2Function.{resourceName}");
             if (stream == null)
             {
                 throw new ArgumentException($@"'{resourceName}' seems not to be an existing resource.", nameof(resourceName));
             }
-            using var reader = new StreamReader(stream);
-            return reader.ReadToEnd();
+
+            using (var reader = new StreamReader(stream))
+            {
+                return reader.ReadToEnd();
+            }
         }
 
     }

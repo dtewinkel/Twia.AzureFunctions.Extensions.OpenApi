@@ -16,20 +16,24 @@ namespace Twia.AzureFunctions.Extensions.OpenApi
             EnsureArg.IsNotNull(context, nameof(context));
 
             var method = context.MethodInfo;
-            var ignoredHeaderParameters = GetIgnoredHeaderParameters(method);
-            var headerParameterAttributes = GetHeaderParameterAttributes(method, ignoredHeaderParameters);
-            foreach (var headerParameterAttribute in headerParameterAttributes)
+            if (method != null)
             {
-                operation.Parameters.Add(
-                    new OpenApiParameter
-                    {
-                        In = ParameterLocation.Header,
-                        Name = headerParameterAttribute.Name,
-                        Schema = context.SchemaGenerator.GenerateSchema(headerParameterAttribute.Type, context.SchemaRepository, method),
-                        Description = headerParameterAttribute.Description,
-                        Required = headerParameterAttribute.IsRequired
-                    }
-                );
+                var ignoredHeaderParameters = GetIgnoredHeaderParameters(method);
+                var headerParameterAttributes = GetHeaderParameterAttributes(method, ignoredHeaderParameters);
+                foreach (var headerParameterAttribute in headerParameterAttributes)
+                {
+                    operation.Parameters.Add(
+                        new OpenApiParameter
+                        {
+                            In = ParameterLocation.Header,
+                            Name = headerParameterAttribute.Name,
+                            Schema = context.SchemaGenerator.GenerateSchema(headerParameterAttribute.Type,
+                                context.SchemaRepository, method),
+                            Description = headerParameterAttribute.Description,
+                            Required = headerParameterAttribute.IsRequired
+                        }
+                    );
+                }
             }
         }
 

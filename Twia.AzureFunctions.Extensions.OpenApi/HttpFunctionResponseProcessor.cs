@@ -100,7 +100,7 @@ namespace Twia.AzureFunctions.Extensions.OpenApi
             var apiResponseType = new ApiResponseType
             {
                 Type = responseType,
-                StatusCode = statusCode,
+                StatusCode = statusCode
             };
             if (responseType != typeof(void))
             {

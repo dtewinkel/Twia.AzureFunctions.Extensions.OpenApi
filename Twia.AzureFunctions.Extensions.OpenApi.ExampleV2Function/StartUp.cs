@@ -5,13 +5,14 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Twia.AzureFunctions.Extensions.OpenApi.DependencyInjection;
-using Twia.AzureFunctions.Extensions.OpenApi.ExampleFunction;
+using Twia.AzureFunctions.Extensions.OpenApi.ExampleV2Function;
 
 #pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable S1075 // URIs should not be hardcoded
 
 [assembly: FunctionsStartup(typeof(StartUp))]
 
-namespace Twia.AzureFunctions.Extensions.OpenApi.ExampleFunction
+namespace Twia.AzureFunctions.Extensions.OpenApi.ExampleV2Function
 {
     public class StartUp : FunctionsStartup
     {
@@ -35,16 +36,15 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.ExampleFunction
                 {
                     Version = "v1",
                     Description = "Some great version of the documentation",
-                    Title = "Example Function V3 documentation"
+                    Title = "Example Function V2 documentation"
                 });
 
-#pragma warning disable S1075 // URIs should not be hardcoded
             options.SwaggerDoc("v2",
                 new OpenApiInfo
                 {
                     Version = "v2",
                     Description = "Some next great version of the documentation",
-                    Title = "Example Function V3 documentation version 2",
+                    Title = "Example Function V2 documentation version 2",
                     Contact = new OpenApiContact
                     {
                         Email = "john.doe@example.com",
@@ -58,7 +58,6 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.ExampleFunction
                     },
                     TermsOfService = new Uri("https://example.com/terms-of-service")
                 });
-#pragma warning restore S1075 // URIs should not be hardcoded
         }
     }
 }

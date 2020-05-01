@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Twia.AzureFunctions.Extensions.OpenApi.ExampleFunction.ExampleHttpFunctions
+namespace Twia.AzureFunctions.Extensions.OpenApi.ExampleV2Function.ExampleHttpFunctions
 {
     /// <summary>
     /// Example request body type.
@@ -30,11 +30,5 @@ namespace Twia.AzureFunctions.Extensions.OpenApi.ExampleFunction.ExampleHttpFunc
         [MinLength(1)]
         [MaxLength(100)]
         public string Name { get; set; }
-
-        /// <summary>
-        /// Number of things.
-        /// </summary>
-        [Range(1, 100)]
-        public int? Count { get; set; } 
     }
 }
