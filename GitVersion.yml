@@ -4,3 +4,6 @@ continuous-delivery-fallback-tag: ''
 branches:
   master:
     increment: Minor
+  support:
+    regex: ^fix[/-]
+    increment: Patch
